@@ -1,0 +1,229 @@
+/* ================================ */
+/*   外框                           */
+/* ================================ */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  height: 100vh;
+  width: 100vw;
+  background: #333;
+}
+#root {
+  background: #000;
+  background-image: url(img/bg/鐵鏽水管.png);
+  width: 640px;
+  height: 480px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ================================ */
+/*   顯示文字                       */
+/* ================================ */
+#text {
+  position: absolute;
+  left: 0;
+  bottom: 50px;
+  z-index: 3000;
+  width: 100%;
+  padding: 20px 0;
+  transition: transform .3s;
+  transform: scaleY(1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  --bg_color: #333;
+  --bg_pos: 8px;
+  pointer-events: none;
+  background: linear-gradient(transparent, var(--bg_color) var(--bg_pos), var(--bg_color) calc(100% - var(--bg_pos)), transparent);
+}
+#text.hidden {
+  transform: scaleY(0);
+}
+#text:after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  width: 7px;
+  height: 13px;
+  transform: rotate(90deg);
+  clip-path: polygon(3% 0, 10% 0, 97% 45%, 100% 50%, 97% 55%, 10% 100%, 3% 100%, 0 90%, 0 10%);
+  animation: .6s linear 0s infinite alternate text_arrow;
+  background: linear-gradient(90deg, #fff 40%, #888);
+  filter: drop-shadow(2px 2px 0 #000);
+}
+#text span {
+  background: linear-gradient(#fff 40%, #888);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: drop-shadow(2px 2px 0 #000);
+  font-weight: bold;
+}
+@keyframes text_arrow {
+  from { bottom: -2px; }
+  to { bottom: -4px; }
+}
+
+/* ================================ */
+/*   gameclear                       */
+/* ================================ */
+#gameclear {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  z-index: 1000;
+  opacity: 0;
+  transition: 0s;
+}
+#gameclear.go {
+  opacity: 1;
+  transition: opacity 2.2s;
+}
+
+/* ================================ */
+/*   gameover                       */
+/* ================================ */
+#gameover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 1000;
+}
+
+/* ================================ */
+/*   顏色                           */
+/* ================================ */
+#root:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+#root.hit:after {
+  background: #F003 !important;
+  backdrop-filter: brightness(1.2);
+}
+
+/* ================================ */
+/*   vs_moment                      */
+/* ================================ */
+#vs_moment {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(img/vs_moment.png);
+  z-index: 1000;
+}
+#vs_moment span {
+  color: #850000cc;
+  font-size: 148px;
+  font-family: fantasy;
+  position: absolute;
+  left: 85px;
+  top: 65px;
+  transform: rotate(15deg);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ================================ */
+/*   計時器                         */
+/* ================================ */
+#time {
+  position: absolute;
+  font-size: 28px;
+  font-family: fantasy;
+  letter-spacing: 5px;
+  left: 8px;
+  top: 4px;
+  background: linear-gradient(#fff, #A00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  z-index: 1;
+  filter: drop-shadow(2px 2px 0 #000);
+}
+
+/* ================================ */
+/*   提示                           */
+/* ================================ */
+#tip {
+  position: absolute;
+  font-size: 28px;
+  font-family: fantasy;
+  letter-spacing: 5px;
+  left: 0;
+  bottom: 8px;
+  background: linear-gradient(#fff, #AA0);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  z-index: 1;
+  filter: drop-shadow(2px 2px 0 #000);
+  width: 100%;
+  text-align: center;
+}
+
+/* ================================ */
+/*   角色                           */
+/* ================================ */
+#character {
+  position: absolute;
+  top: 128px;
+  left: calc(160px + 32px * var(--pos));
+  background: var(--c_img);
+  width: 96px;
+  height: 160px;
+  transition: left .1s .0s linear, background 0s;
+}
+#character.r {
+  transform: scaleX(-1);
+}
+#character.move {
+  animation: .3s linear 0s 1 character_move;
+}
+@keyframes character_move {
+  0% { background: var(--c_img_a); }
+  50% { background: var(--c_img_a); }
+  51% { background: var(--c_img_b); }
+  100% { background: var(--c_img_b)); }
+}
+
+/* ================================ */
+/*   掉落攻擊                       */
+/* ================================ */
+#items {
+  position: absolute;
+  width: 256px;
+  height: 32px;
+  display: flex;
+  left: 192px;
+  top: -64px;
+}
+.item {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  --pos: 0;
+  transition: top var(--fall_speed) linear;
+  top: calc(32px * var(--pos));
+}
+.item:after {
+  content: "";
+  position: absolute;
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <title>CoE - VS. MOMENT</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css.css">
+    <link rel="stylesheet" href="title.css">
+    <link rel="stylesheet" href="skin.css">
+    <script src="./universal.js"></script>
+    <script src="js.js"></script>
+    <script src="atk.js"></script>
+  </head>
+  <body>
+    <div id="audio_list" style="display: none;">
+      <audio id="bgm" src="audio/BGM.mp3"></audio>
+      <audio id="se_gameover" src="audio/gameover.mp3"></audio>
+      <audio id="se_move" src="audio/風.mp3"></audio>
+      <audio id="se_fall" src="audio/冰.mp3"></audio>
+      <audio id="se_hit" src="audio/打.mp3"></audio>
+      <audio id="se_key_move" src="audio/key_move.mp3"></audio>
+      <audio id="se_key_check" src="audio/key_check.mp3"></audio>
+      <audio id="se_key_cancel" src="audio/key_cancel.mp3"></audio>
+      <audio id="se_get" src="audio/get.mp3"></audio>
+      <audio id="se_yeah" src="audio/yeah.mp3"></audio>
+    </div>
+    <main id="root" name="ice">
+      <div id="text" class="hidden"><span></span></div>
+      <div id="gameclear"></div>
+      <div id="gameover" style="display: none;"></div>
+      <div id="vs_moment"><span>VS.<br>MOMENT</span></div>
+      <div id="time">01:57</div>
+      <div id="tip"></div>
+      <div id="character"></div>
+      <div id="items">
+        <div class="item ice"></div>
+        <div class="item ice"></div>
+        <div class="item ice"></div>
+        <div class="item ice"></div>
+        <div class="item ice"></div>
+        <div class="item ice"></div>
+        <div class="item ice"></div>
+        <div class="item ice"></div>
+      </div>
+      <div id="title">
+        <div id="character_name"><span class="move_ani">阿藤春樹</span></div>
+        <div id="character_image" class="move_ani">
+          <img src="img/character/阿藤春樹.png"/>
+        </div>
+        <div id="title_text">
+          <span>VS. MOMENT</span><br>
+          「← / →」控制<br>
+          「Z / 空白鍵 / enter」確定<br>
+          「🔒」通關其他角色可解鎖<br>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
