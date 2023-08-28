@@ -209,11 +209,12 @@ function character_data_read(character) {
   fall_before_time = character.fall_before_time;
   fall_speed = character.fall_speed;
   main_speed = character.main_speed;
+  one_atk_time = fall_before_time + fall_speed * item_max_pos;
+  item_set_interval();
   find('#se_fall').src = `./audio/${character.se_fall}.mp3`;
   find('#se_move').src = `./audio/${character.se_move}.mp3`;
   ATK_Wait.wait_time = character.wait_time;
   atk_list = character.atk_list;
-  one_atk_time = fall_before_time + fall_speed * item_max_pos;
 }
 
 /* ================================ */
@@ -253,7 +254,7 @@ const item_max_pos = 23;
 const items_state = [];
 var main_speed = 1;
 var fall_before_time = 100;
-var fall_speed = 18;
+var fall_speed = 28;
 var one_atk_time = fall_before_time + fall_speed * item_max_pos;
 function item_init() {
   let els = find_all('.item');
@@ -264,6 +265,14 @@ function item_init() {
       falling: false,
       wait: null,
     };
+    items_state[f] = item;
+  }
+  item_set_interval();
+}
+function item_set_interval() {
+  for(let f=0; f<8; f++) {
+    let item = items_state[f];
+    clearInterval(item.interval);
     item.interval = setInterval(() => {
       if(!item.falling) return;
       item.pos++;
@@ -271,7 +280,6 @@ function item_init() {
       if(item.pos == item_max_pos) item_fall_stop(item);
       else if(item.pos == item_atk_pos && cur_pos == f) ATK_Manager.hit();
     }, fall_speed);
-    items_state[f] = item;
   }
 }
 function hit_stop_items() {
@@ -302,12 +310,14 @@ function item_fall_p(indexs) {
 }
 function item_fall(index) {
   let item = items_state[index];
-  item_fall_stop(item);
   item.wait = setTimeout(() => {
-    se("fall");
-    item.el.style.setProperty('--fall_speed', (fall_speed / 1000) + "s");
-    item.falling = true;
-  }, fall_before_time);
+    item_fall_stop(item);
+    item.wait = setTimeout(() => {
+      se("fall");
+      item.el.style.setProperty('--fall_speed', (fall_speed / 1000) + "s");
+      item.falling = true;
+    }, 20);
+  }, fall_before_time - 20);
 }
 
 /* ================================ */
