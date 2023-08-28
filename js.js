@@ -277,14 +277,12 @@ function item_init() {
 function hit_stop_items() {
   items_state.forEach(item => {
     clearTimeout(item.wait);
-    item.falling = false;
-    item.el.style.removeProperty('--fall_speed');
+    item_fall_stop(item);
   });
 }
 function reset_items() {
   items_state.forEach(item => {
-    item.pos = 0;
-    item.el.style.setProperty('--pos', 0);
+    item_fall_stop(item);
   });
 }
 function item_fall_stop(item) {
