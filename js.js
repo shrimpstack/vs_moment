@@ -50,8 +50,8 @@ function clearance_game() {
   }, 1800);
   setTimeout(bgm_stop, 2400);
   setTimeout(() => {
-    (character_list[cur_character_index].unlock || [])
-    .forEach(target_name => unlock_character(target_name));
+    let unlock_list = character_list[cur_character_index].unlock;
+    if(unlock_list) unlock_character(unlock_list);
     game_state = "clear_ed";
     game_end = true;
   }, 5000);
@@ -83,7 +83,10 @@ function back_title() {
 /* ================================ */
 var view_text_ing = false;
 function text_show(str) {
-  find('#text span').innerText = str;
+  find('#text').innerHTML = "";
+  str.split('\n').map(string => {
+    new_el_to_el('#text', 'span', string);
+  });
   find('#text').classList.remove('hidden');
   view_text_ing = true;
 }
@@ -173,12 +176,15 @@ const character_list = [
     ],
   },
 ];
-function unlock_character(target_name) {
-  let character = character_list.find(c => c.name == target_name);
-  if(!character || !character.lock) return;
-  character.lock = false;
+function unlock_character(target_names) {
+  if(!Array.isArray(target_names)) target_names = [target_names];
+  target_names.forEach(name => {
+    let character = character_list.find(c => c.name == name);
+    if(!character || !character.lock) return;
+    character.lock = false;
+  });
   se('get');
-  text_show("解鎖了 " + target_name);
+  text_show(target_names.map(n => n + " 🔓").join('\n'));
 }
 function select_character(direction) {
   if(!in_title || selecting) return;
