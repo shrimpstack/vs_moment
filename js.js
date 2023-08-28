@@ -1,7 +1,7 @@
 window.onload = () => {
   document.addEventListener('keydown', e => {
-    if(e.code == "ArrowLeft") { move(-1); select_character(-1); return; }
-    if(e.code == "ArrowRight") { move(1); select_character(1); return; }
+    if(e.code == "ArrowLeft" || e.code == "KeyA") { move(-1); select_character(-1); return; }
+    if(e.code == "ArrowRight" || e.code == "KeyD") { move(1); select_character(1); return; }
     if(e.code == "Space" || e.code == "KeyZ" || e.code == "Enter") {
       if(view_text_ing) text_hide();
       else if(in_title) check_select_character();
@@ -126,6 +126,7 @@ const character_list = [
     name: "阿藤春樹 (困難版)",
     skin: "阿藤春樹",
     lock: false,
+    unlock: ["磯井麗慈", "磯井麗慈 (困難版)"],
     tip: false,
     hp: 3,
     time: 100,
