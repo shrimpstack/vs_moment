@@ -36,3 +36,19 @@
 #root[name="磯井麗慈"]:after {
   backdrop-filter: sepia(.5);
 }
+
+/* ================================ */
+/*   磯井實光                       */
+/* ================================ */
+#root[name="磯井實光"] {
+  background-image: url(./img/bg/河堤.png);
+  --c_img: url(./img/move/實光.gif);
+  --c_img_a: url(./img/move/實光a.png);
+  --c_img_b: url(./img/move/實光b.png);
+}
+#root[name="磯井實光"] .item:after {
+  bottom: -9px;
+  width: 32px;
+  height: 43px;
+  background: url(./img/item/信封.png);
+}

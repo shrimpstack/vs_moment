@@ -180,6 +180,25 @@ const character_list = [
       "ATK_L2R_YouPosition",
     ],
   },
+  {
+    name: "磯井實光",
+    skin: "磯井實光",
+    lock: true,
+    tip: true,
+    hp: 3,
+    time: 60,
+    start_pos: 4,
+    fall_before_time: 300,
+    fall_speed: 28,
+    main_speed: 1,
+    wait_time: 800,
+    se_fall: "翻頁",
+    se_move: "咻",
+    atk_list: [
+      "ATK_L2R", "ATK_R2L", "ATK_OddEven", "ATK_YouPosition",
+      "ATK_4", "ATK_I2O",
+    ],
+  },
 ];
 function unlock_character(target_names) {
   if(!Array.isArray(target_names)) target_names = [target_names];
