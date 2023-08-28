@@ -203,6 +203,13 @@ body {
   51% { background: var(--c_img_b); }
   100% { background: var(--c_img_b)); }
 }
+#character_load_img {
+  position: absolute;
+  left: 100%;
+  background: var(--c_img), var(--c_img_a), var(--c_img_b);
+  width: 96px;
+  height: 160px;
+}
 
 /* ================================ */
 /*   掉落攻擊                       */

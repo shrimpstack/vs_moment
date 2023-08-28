@@ -3,8 +3,6 @@
 /* ================================ */
 #root[name="阿藤春樹"] {
   background-image: url(./img/bg/鐵鏽水管.png);
-}
-#root[name="阿藤春樹"] #character {
   --c_img: url(./img/move/阿藤.gif);
   --c_img_a: url(./img/move/阿藤a.png);
   --c_img_b: url(./img/move/阿藤b.png);
@@ -25,8 +23,6 @@
 /* ================================ */
 #root[name="磯井麗慈"] {
   background-image: url(./img/bg/廢墟.png);
-}
-#root[name="磯井麗慈"] #character {
   --c_img: url(./img/move/麗慈.gif);
   --c_img_a: url(./img/move/麗慈a.png);
   --c_img_b: url(./img/move/麗慈b.png);
