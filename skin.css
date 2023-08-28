@@ -2,18 +2,18 @@
 /*   阿藤春樹                       */
 /* ================================ */
 #root[name="阿藤春樹"] {
-  background-image: url(img/bg/鐵鏽水管.png);
+  background-image: url(./img/bg/鐵鏽水管.png);
 }
 #root[name="阿藤春樹"] #character {
-  --c_img: url(img/move/阿藤.gif);
-  --c_img_a: url(img/move/阿藤a.png);
-  --c_img_b: url(img/move/阿藤b.png);
+  --c_img: url(./img/move/阿藤.gif);
+  --c_img_a: url(./img/move/阿藤a.png);
+  --c_img_b: url(./img/move/阿藤b.png);
 }
 #root[name="阿藤春樹"] .item:after {
   bottom: -32px;
   width: 32px;
   height: 224px;
-  background: url(img/item/冰塊.png);
+  background: url(./img/item/冰塊.png);
 }
 #root[name="阿藤春樹"]:after {
   background: #00F3;
@@ -24,18 +24,18 @@
 /*   磯井麗慈                       */
 /* ================================ */
 #root[name="磯井麗慈"] {
-  background-image: url(img/bg/廢墟.png);
+  background-image: url(./img/bg/廢墟.png);
 }
 #root[name="磯井麗慈"] #character {
-  --c_img: url(img/move/麗慈.gif);
-  --c_img_a: url(img/move/麗慈a.png);
-  --c_img_b: url(img/move/麗慈b.png);
+  --c_img: url(./img/move/麗慈.gif);
+  --c_img_a: url(./img/move/麗慈a.png);
+  --c_img_b: url(./img/move/麗慈b.png);
 }
 #root[name="磯井麗慈"] .item:after {
   bottom: -32px;
   width: 32px;
   height: 128px;
-  background: url(img/item/岩石.png);
+  background: url(./img/item/岩石.png);
 }
 #root[name="磯井麗慈"]:after {
   backdrop-filter: sepia(.5);

@@ -187,7 +187,7 @@ function select_character(direction) {
 function view_character() {
   let character = character_list[cur_character_index];
   find('#character_name span').innerText = character.name;
-  find('#character_image img').src = `img/character/${character.skin}.png`;
+  find('#character_image img').src = `./img/character/${character.skin}.png`;
   find('#character_image').classList.toggle('lock', character.lock);
   find('#character_name').classList.toggle('lock', character.lock);
 }
@@ -209,8 +209,8 @@ function character_data_read(character) {
   fall_before_time = character.fall_before_time;
   fall_speed = character.fall_speed;
   main_speed = character.main_speed;
-  find('#se_fall').src = `audio/${character.se_fall}.mp3`;
-  find('#se_move').src = `audio/${character.se_move}.mp3`;
+  find('#se_fall').src = `./audio/${character.se_fall}.mp3`;
+  find('#se_move').src = `./audio/${character.se_move}.mp3`;
   ATK_Wait.wait_time = character.wait_time;
   atk_list = character.atk_list;
   one_atk_time = fall_before_time + fall_speed * item_max_pos;
