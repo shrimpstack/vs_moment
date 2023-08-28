@@ -103,7 +103,7 @@ const character_list = [
     name: "阿藤春樹",
     skin: "阿藤春樹",
     lock: false,
-    unlock: ["磯井麗慈"],
+    unlock: ["磯井麗慈", "磯井麗慈 (困難版)"],
     tip: true,
     hp: 3,
     time: 60,
@@ -141,7 +141,7 @@ const character_list = [
     skin: "磯井麗慈",
     lock: true,
     tip: true,
-    hp: 3,
+    hp: 5,
     time: 100,
     fall_before_time: 300,
     fall_speed: 28,
@@ -154,10 +154,28 @@ const character_list = [
       "ATK_L2R_YouPosition",
     ],
   },
+  {
+    name: "磯井麗慈 (困難版)",
+    skin: "磯井麗慈",
+    lock: true,
+    tip: false,
+    hp: 3,
+    time: 120,
+    fall_before_time: 300,
+    fall_speed: 18,
+    main_speed: 0.7,
+    wait_time: 460,
+    se_fall: "岩石",
+    se_move: "鐵鍊",
+    atk_list: [
+      "ATK_O2I", "ATK_I2O", "ATK_double_O2I", "ATK_double_I2O",
+      "ATK_L2R_YouPosition",
+    ],
+  },
 ];
 function unlock_character(target_name) {
   let character = character_list.find(c => c.name == target_name);
-  if(!character.lock) return;
+  if(!character || !character.lock) return;
   character.lock = false;
   se('get');
   text_show("解鎖了 " + target_name);
