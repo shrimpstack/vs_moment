@@ -277,22 +277,28 @@ function item_init() {
 function hit_stop_items() {
   items_state.forEach(item => {
     clearTimeout(item.wait);
-    item_fall_stop(item);
+    item.falling = false;
+    item.el.style.removeProperty('--fall_speed');
   });
 }
 function reset_items() {
   items_state.forEach(item => {
-    item_fall_stop(item);
+    item.pos = 0;
+    item.el.style.setProperty('--pos', 0);
   });
 }
 function item_fall_stop(item) {
+  item.falling = false;
   item.el.style.removeProperty('--fall_speed');
   item.pos = 0;
   item.el.style.setProperty('--pos', 0);
-  item.falling = false;
 }
 function item_fall_p(indexs) {
-  indexs.forEach(index => item_fall(index));
+  let check_indexs = [];
+  indexs.forEach(index => {
+    if(!check_indexs.includes(index)) check_indexs.push(index);
+  });
+  check_indexs.forEach(index => item_fall(index));
 }
 function item_fall(index) {
   let item = items_state[index];
