@@ -110,6 +110,7 @@ const character_list = [
     tip: true,
     hp: 3,
     time: 60,
+    start_pos: 4,
     fall_before_time: 300,
     fall_speed: 28,
     main_speed: 1,
@@ -128,6 +129,7 @@ const character_list = [
     tip: false,
     hp: 3,
     time: 100,
+    start_pos: 4,
     fall_before_time: 100,
     fall_speed: 18,
     main_speed: 0.7,
@@ -146,6 +148,7 @@ const character_list = [
     tip: true,
     hp: 5,
     time: 100,
+    start_pos: 4,
     fall_before_time: 300,
     fall_speed: 28,
     main_speed: 1,
@@ -164,6 +167,7 @@ const character_list = [
     tip: false,
     hp: 3,
     time: 120,
+    start_pos: 4,
     fall_before_time: 300,
     fall_speed: 18,
     main_speed: 0.7,
@@ -230,6 +234,7 @@ function character_data_read(character) {
   has_tip = character.tip;
   hp = character.hp;
   time = character.time;
+  find('#character').style.setProperty('--pos', cur_pos = character.start_pos);
   fall_before_time = character.fall_before_time;
   fall_speed = character.fall_speed;
   main_speed = character.main_speed;
