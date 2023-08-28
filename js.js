@@ -184,7 +184,7 @@ function unlock_character(target_names) {
     character.lock = false;
   });
   se('get');
-  text_show(target_names.map(n => n + " 🔓").join('\n'));
+  text_show(target_names.map(n => "已解鎖 " + n).join('\n'));
 }
 function select_character(direction) {
   if(!in_title || selecting) return;
