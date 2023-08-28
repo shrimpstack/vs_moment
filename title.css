@@ -157,7 +157,8 @@
   height: 100%;
   object-fit: scale-down;
   pointer-events: none;
+  user-select: none;
 }
-#character_image.lock img {
+#character_image.lock {
   filter: sepia(1) brightness(0.2);
 }

@@ -211,7 +211,7 @@ function select_character(direction) {
 function view_character() {
   let character = character_list[cur_character_index];
   find('#character_name span').innerText = character.name;
-  find('#character_image img').src = `./img/character/${character.skin}.png`;
+  find('#character_image').src = `./img/character/${character.skin}.png`;
   find('#character_image').classList.toggle('lock', character.lock);
   find('#character_name').classList.toggle('lock', character.lock);
 }
