@@ -54,7 +54,7 @@ function clearance_game() {
     if(unlock_list) unlock_character(unlock_list);
     game_state = "clear_ed";
     game_end = true;
-  }, 5000);
+  }, 3000);
 }
 function gameover() {
   bgm_stop();
@@ -146,6 +146,7 @@ const character_list = [
     name: "磯井麗慈",
     skin: "磯井麗慈",
     lock: true,
+    unlock: ["磯井實光", "磯井實光 (困難版)"],
     tip: true,
     hp: 5,
     time: 100,
@@ -165,6 +166,7 @@ const character_list = [
     name: "磯井麗慈 (困難版)",
     skin: "磯井麗慈",
     lock: true,
+    unlock: ["磯井實光", "磯井實光 (困難版)"],
     tip: false,
     hp: 3,
     time: 120,
@@ -185,7 +187,7 @@ const character_list = [
     skin: "磯井實光",
     lock: true,
     tip: true,
-    hp: 3,
+    hp: 5,
     time: 60,
     start_pos: 4,
     fall_before_time: 300,
@@ -195,20 +197,44 @@ const character_list = [
     se_fall: "翻頁",
     se_move: "咻",
     atk_list: [
-      "ATK_L2R", "ATK_R2L", "ATK_OddEven", "ATK_YouPosition",
-      "ATK_4", "ATK_I2O",
+      "ATK_double_L2R", "ATK_Odd_YouPosition",
+      "ATK_double_R2L", "ATK_Even_YouPosition",
+      "ATK_OddEven_2", "ATK_double_YouPosition",
+    ],
+  },
+  {
+    name: "磯井實光 (困難版)",
+    skin: "磯井實光",
+    lock: true,
+    tip: true,
+    hp: 3,
+    time: 100,
+    start_pos: 3,
+    fall_before_time: 300,
+    fall_speed: 18,
+    main_speed: 0.7,
+    wait_time: 460,
+    se_fall: "翻頁",
+    se_move: "咻",
+    atk_list: [
+      "ATK_double_L2R", "ATK_Odd_YouPosition",
+      "ATK_double_R2L", "ATK_Even_YouPosition",
+      "ATK_OddEven_2", "ATK_double_YouPosition",
     ],
   },
 ];
 function unlock_character(target_names) {
   if(!Array.isArray(target_names)) target_names = [target_names];
-  target_names.forEach(name => {
+  let unlock_count = target_names.map(name => {
     let character = character_list.find(c => c.name == name);
-    if(!character || !character.lock) return;
+    if(!character || !character.lock) return false;
     character.lock = false;
-  });
-  se('get');
-  text_show(target_names.map(n => "已解鎖 " + n).join('\n'));
+    return true;
+  }).filter(c => c).length;
+  if(unlock_count) {
+    se('get');
+    text_show(target_names.map(n => "已解鎖 " + n).join('\n'));
+  }
 }
 function select_character(direction) {
   if(!in_title || selecting) return;

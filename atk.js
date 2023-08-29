@@ -136,6 +136,104 @@ class ATK_R2L {
 atk_get.ATK_R2L = ATK_R2L;
 
 /* ================================ */
+/*   雙重左到右                     */
+/* ================================ */
+class ATK_double_L2R {
+  static interval = null;
+  static cur_index = 0;
+  static res = () => {};
+  static done_wait = null;
+  static start() {
+    tip("double LEFT => RIGHT");
+    clearInterval(ATK_double_L2R.interval);
+    ATK_double_L2R.cur_index = 0;
+    return new Promise((res, rej) => {
+      ATK_double_L2R.res = res;
+      ATK_double_L2R.interval = setInterval(ATK_double_L2R.tick, 450 * main_speed);
+    });
+  }
+  static tick() {
+    switch(ATK_double_L2R.cur_index) {
+      case 0: item_fall_p([0, 4]); break;
+      case 1: item_fall_p([1, 5]); break;
+      case 2: item_fall_p([2, 6]); break;
+      case 3: item_fall_p([3, 7]); break;
+      case 4: item_fall_p([4, 0]); break;
+      case 5: item_fall_p([5, 1]); break;
+      case 6: item_fall_p([6, 2]); break;
+    }
+    ATK_double_L2R.cur_index++;
+    if(ATK_double_L2R.cur_index == 7) ATK_double_L2R.done();
+  }
+  static done() {
+    clearInterval(ATK_double_L2R.interval);
+    ATK_double_L2R.done_wait = setTimeout(() => ATK_double_L2R.res('done'), one_atk_time);
+  }
+  static hit_stop() {
+    clearInterval(ATK_double_L2R.interval);
+    clearTimeout(ATK_double_L2R.done_wait);
+  }
+  static hit_end() {
+    ATK_double_L2R.res('hit');
+  }
+  static game_stop() {
+    clearInterval(ATK_double_L2R.interval);
+    clearTimeout(ATK_double_L2R.done_wait);
+    ATK_double_L2R.res('stop');
+  }
+}
+atk_get.ATK_double_L2R = ATK_double_L2R;
+
+/* ================================ */
+/*   雙重右到左                     */
+/* ================================ */
+class ATK_double_R2L {
+  static interval = null;
+  static cur_index = 0;
+  static res = () => {};
+  static done_wait = null;
+  static start() {
+    tip("double RIGHT => LEFT");
+    clearInterval(ATK_double_R2L.interval);
+    ATK_double_R2L.cur_index = 0;
+    return new Promise((res, rej) => {
+      ATK_double_R2L.res = res;
+      ATK_double_R2L.interval = setInterval(ATK_double_R2L.tick, 450 * main_speed);
+    });
+  }
+  static tick() {
+    switch(ATK_double_R2L.cur_index) {
+      case 0: item_fall_p([7, 3]); break;
+      case 1: item_fall_p([6, 2]); break;
+      case 2: item_fall_p([5, 1]); break;
+      case 3: item_fall_p([4, 0]); break;
+      case 4: item_fall_p([3, 7]); break;
+      case 5: item_fall_p([2, 6]); break;
+      case 6: item_fall_p([1, 5]); break;
+    }
+    ATK_double_R2L.cur_index++;
+    if(ATK_double_R2L.cur_index == 7) ATK_double_R2L.done();
+  }
+  static done() {
+    clearInterval(ATK_double_R2L.interval);
+    ATK_double_R2L.done_wait = setTimeout(() => ATK_double_R2L.res('done'), one_atk_time);
+  }
+  static hit_stop() {
+    clearInterval(ATK_double_R2L.interval);
+    clearTimeout(ATK_double_R2L.done_wait);
+  }
+  static hit_end() {
+    ATK_double_R2L.res('hit');
+  }
+  static game_stop() {
+    clearInterval(ATK_double_R2L.interval);
+    clearTimeout(ATK_double_R2L.done_wait);
+    ATK_double_R2L.res('stop');
+  }
+}
+atk_get.ATK_double_R2L = ATK_double_R2L;
+
+/* ================================ */
 /*   奇數偶數                       */
 /* ================================ */
 class ATK_OddEven {
@@ -190,6 +288,52 @@ class ATK_OddEven {
 atk_get.ATK_OddEven = ATK_OddEven;
 
 /* ================================ */
+/*   奇數偶數 整排                  */
+/* ================================ */
+class ATK_OddEven_2 {
+  static interval = null;
+  static cur_index = 0;
+  static res = () => {};
+  static done_wait = null;
+  static start() {
+    tip("ODD & EVEN");
+    clearInterval(ATK_OddEven_2.interval);
+    ATK_OddEven_2.cur_index = 0;
+    return new Promise((res, rej) => {
+      ATK_OddEven_2.res = res;
+      ATK_OddEven_2.interval = setInterval(ATK_OddEven_2.tick, 450 * main_speed);
+    });
+  }
+  static tick() {
+    switch(ATK_OddEven_2.cur_index) {
+      case 0: item_fall_p([0, 2, 4, 6]); break;
+      case 1: item_fall_p([1, 3, 5, 7]); break;
+      case 2: item_fall_p([0, 2, 4, 6]); break;
+      case 3: item_fall_p([1, 3, 5, 7]); break;
+    }
+    ATK_OddEven_2.cur_index++;
+    if(ATK_OddEven_2.cur_index == 4) ATK_OddEven_2.done();
+  }
+  static done() {
+    clearInterval(ATK_OddEven_2.interval);
+    ATK_OddEven_2.done_wait = setTimeout(() => ATK_OddEven_2.res('done'), one_atk_time);
+  }
+  static hit_stop() {
+    clearInterval(ATK_OddEven_2.interval);
+    clearTimeout(ATK_OddEven_2.done_wait);
+  }
+  static hit_end() {
+    ATK_OddEven_2.res('hit');
+  }
+  static game_stop() {
+    clearInterval(ATK_OddEven_2.interval);
+    clearTimeout(ATK_OddEven_2.done_wait);
+    ATK_OddEven_2.res('stop');
+  }
+}
+atk_get.ATK_OddEven_2 = ATK_OddEven_2;
+
+/* ================================ */
 /*   位置追蹤                       */
 /* ================================ */
 class ATK_YouPosition {
@@ -229,6 +373,53 @@ class ATK_YouPosition {
   }
 }
 atk_get.ATK_YouPosition = ATK_YouPosition;
+
+/* ================================ */
+/*   雙重位置追蹤                   */
+/* ================================ */
+class ATK_double_YouPosition {
+  static interval = null;
+  static count = 5;
+  static res = () => {};
+  static done_wait = null;
+  static prev_pos = null;
+  static start() {
+    tip("your position");
+    clearInterval(ATK_double_YouPosition.interval);
+    ATK_double_YouPosition.count = 5;
+    ATK_double_YouPosition.prev_pos = null;
+    return new Promise((res, rej) => {
+      ATK_double_YouPosition.res = res;
+      ATK_double_YouPosition.interval = setInterval(ATK_double_YouPosition.tick, 750 * main_speed);
+    });
+  }
+  static tick() {
+    if(ATK_double_YouPosition.prev_pos != null && ATK_double_YouPosition.prev_pos != cur_pos) {
+      item_fall_p([ATK_double_YouPosition.prev_pos, cur_pos]);
+    }
+    else item_fall(cur_pos);
+    ATK_double_YouPosition.prev_pos = cur_pos;
+    ATK_double_YouPosition.count--;
+    if(!ATK_double_YouPosition.count) ATK_double_YouPosition.done();
+  }
+  static done() {
+    clearInterval(ATK_double_YouPosition.interval);
+    ATK_double_YouPosition.done_wait = setTimeout(() => ATK_double_YouPosition.res('done'), one_atk_time);
+  }
+  static hit_stop() {
+    clearInterval(ATK_double_YouPosition.interval);
+    clearTimeout(ATK_double_YouPosition.done_wait);
+  }
+  static hit_end() {
+    ATK_double_YouPosition.res('hit');
+  }
+  static game_stop() {
+    clearInterval(ATK_double_YouPosition.interval);
+    clearTimeout(ATK_double_YouPosition.done_wait);
+    ATK_double_YouPosition.res('stop');
+  }
+}
+atk_get.ATK_double_YouPosition = ATK_double_YouPosition;
 
 /* ================================ */
 /*   4個並排                        */
@@ -517,3 +708,95 @@ class ATK_L2R_YouPosition {
   }
 }
 atk_get.ATK_L2R_YouPosition = ATK_L2R_YouPosition;
+
+/* ================================ */
+/*   奇數 + 追蹤                    */
+/* ================================ */
+class ATK_Odd_YouPosition {
+  static interval = null;
+  static cur_index = 0;
+  static res = () => {};
+  static done_wait = null;
+  static start() {
+    tip("ODD & your position");
+    clearInterval(ATK_Odd_YouPosition.interval);
+    ATK_Odd_YouPosition.cur_index = 0;
+    return new Promise((res, rej) => {
+      ATK_Odd_YouPosition.res = res;
+      ATK_Odd_YouPosition.interval = setInterval(ATK_Odd_YouPosition.tick, 450 * main_speed);
+    });
+  }
+  static tick() {
+    switch(ATK_Odd_YouPosition.cur_index) {
+      case 0: item_fall_p([0, 2]); break;
+      case 1: item_fall_p([2, 4, cur_pos]); break;
+      case 2: item_fall_p([4, 6]); break;
+      case 3: item_fall(cur_pos); break;
+    }
+    ATK_Odd_YouPosition.cur_index++;
+    if(ATK_Odd_YouPosition.cur_index == 4) ATK_Odd_YouPosition.done();
+  }
+  static done() {
+    clearInterval(ATK_Odd_YouPosition.interval);
+    ATK_Odd_YouPosition.done_wait = setTimeout(() => ATK_Odd_YouPosition.res('done'), one_atk_time);
+  }
+  static hit_stop() {
+    clearInterval(ATK_Odd_YouPosition.interval);
+    clearTimeout(ATK_Odd_YouPosition.done_wait);
+  }
+  static hit_end() {
+    ATK_Odd_YouPosition.res('hit');
+  }
+  static game_stop() {
+    clearInterval(ATK_Odd_YouPosition.interval);
+    clearTimeout(ATK_Odd_YouPosition.done_wait);
+    ATK_Odd_YouPosition.res('stop');
+  }
+}
+atk_get.ATK_Odd_YouPosition = ATK_Odd_YouPosition;
+
+/* ================================ */
+/*   偶數 + 追蹤                    */
+/* ================================ */
+class ATK_Even_YouPosition {
+  static interval = null;
+  static cur_index = 0;
+  static res = () => {};
+  static done_wait = null;
+  static start() {
+    tip("EVEN & your position");
+    clearInterval(ATK_Even_YouPosition.interval);
+    ATK_Even_YouPosition.cur_index = 0;
+    return new Promise((res, rej) => {
+      ATK_Even_YouPosition.res = res;
+      ATK_Even_YouPosition.interval = setInterval(ATK_Even_YouPosition.tick, 450 * main_speed);
+    });
+  }
+  static tick() {
+    switch(ATK_Even_YouPosition.cur_index) {
+      case 0: item_fall_p([1, 3]); break;
+      case 1: item_fall_p([3, 5, cur_pos]); break;
+      case 2: item_fall_p([5, 7]); break;
+      case 3: item_fall(cur_pos); break;
+    }
+    ATK_Even_YouPosition.cur_index++;
+    if(ATK_Even_YouPosition.cur_index == 4) ATK_Even_YouPosition.done();
+  }
+  static done() {
+    clearInterval(ATK_Even_YouPosition.interval);
+    ATK_Even_YouPosition.done_wait = setTimeout(() => ATK_Even_YouPosition.res('done'), one_atk_time);
+  }
+  static hit_stop() {
+    clearInterval(ATK_Even_YouPosition.interval);
+    clearTimeout(ATK_Even_YouPosition.done_wait);
+  }
+  static hit_end() {
+    ATK_Even_YouPosition.res('hit');
+  }
+  static game_stop() {
+    clearInterval(ATK_Even_YouPosition.interval);
+    clearTimeout(ATK_Even_YouPosition.done_wait);
+    ATK_Even_YouPosition.res('stop');
+  }
+}
+atk_get.ATK_Even_YouPosition = ATK_Even_YouPosition;
