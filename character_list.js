@@ -131,13 +131,13 @@ const character_list = [
     start_pos: 4,
     fall_before_time: 300,
     fall_speed: 28,
-    main_speed: 0.9,
+    main_speed: 1,
     wait_time: 800,
     se_fall: "十字架",
     se_move: "刺",
     atk_list: [
-      "ATK_O2I2O", "ATK_OddEven_L2R", "ATK_Reiji",
-      "ATK_I2O2I", "ATK_OddEven_R2L", "ATK_Reiji",
+      "ATK_OddEven_L2R", "ATK_triple_And_YouPosition", "ATK_Reiji", 
+      "ATK_OddEven_R2L", "ATK_triple_And_YouPosition", "ATK_Reiji",
     ],
   },
   {
@@ -155,8 +155,8 @@ const character_list = [
     se_fall: "十字架",
     se_move: "刺",
     atk_list: [
-      "ATK_O2I2O", "ATK_OddEven_L2R", "ATK_Reiji",
-      "ATK_I2O2I", "ATK_OddEven_R2L", "ATK_Reiji",
+      "ATK_OddEven_L2R", "ATK_triple_And_YouPosition", "ATK_Reiji", 
+      "ATK_OddEven_R2L", "ATK_triple_And_YouPosition", "ATK_Reiji",
     ],
   },
 ];

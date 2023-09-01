@@ -518,3 +518,24 @@ atk_get.ATK_4 = class extends ATK_base {
     }
   }
 }
+
+// 跳舞
+atk_get.ATK_triple_And_YouPosition = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
+    tip("triple & your position");
+    this.set_time(600);
+  }
+  static tick(i) {
+    switch(i) {
+      case 0: item_fall_p([1, 2, 3]); break;
+      case 1: item_fall_p([5, 6, 7, cur_pos]); break;
+      case 4: item_fall_p([3, 4, 5]); break;
+      case 5: item_fall_p([7, 0, 1, cur_pos]); break;
+      case 2: item_fall_p([2, 3, 4]); break;
+      case 3: item_fall_p([6, 7, 0, cur_pos]); break;
+      case 6: item_fall_p([4, 5, 6]); break;
+      case 7: item_fall_p([0, 1, 2, cur_pos]); break;
+    }
+  }
+}
