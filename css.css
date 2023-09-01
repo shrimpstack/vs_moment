@@ -227,10 +227,12 @@ body {
 .item {
   width: 32px;
   height: 32px;
-  position: relative;
-  --pos: 0;
+  position: absolute;
+  --grid_pos: -6;
+  --fall_pos: 0;
   transition: top var(--fall_speed) linear;
-  top: calc(32px * var(--pos));
+  top: calc(32px * var(--fall_pos));
+  left: calc(32px * var(--grid_pos));
 }
 .item:after {
   content: "";

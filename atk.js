@@ -9,24 +9,30 @@ class ATK_Manager {
     return await ATK_Manager.cur_atk.start();
   }
   static hit_stop_atk() {
-    if(ATK_Manager.cur_atk) ATK_Manager.cur_atk.hit_stop();
+    if(ATK_Manager.cur_atk && ATK_Manager.cur_atk.hit_stop) {
+      ATK_Manager.cur_atk.hit_stop();
+    }
   }
   static hit_end_atk() {
-    if(ATK_Manager.cur_atk) ATK_Manager.cur_atk.hit_end();
+    if(ATK_Manager.cur_atk && ATK_Manager.cur_atk.hit_end) {
+      ATK_Manager.cur_atk.hit_end();
+    }
   }
   static game_stop_atk() {
-    if(ATK_Manager.cur_atk) ATK_Manager.cur_atk.game_stop();
+    if(ATK_Manager.cur_atk && ATK_Manager.cur_atk.game_stop) {
+      ATK_Manager.cur_atk.game_stop();
+    }
   }
   static hit() {
     move_lock = true;
     hp--;
-    hit_stop_items();
+    ItemObj.hit_stop_all_item();
     ATK_Manager.hit_stop_atk();
     find('#root').classList.add('hit');
     se("hit");
     setTimeout(() => {
       find('#root').classList.remove('hit');
-      reset_items();
+      ItemObj.remove_all_item();
       move_lock = false;
       if(hp == 0) gameover();
       else setTimeout(ATK_Manager.hit_end_atk, 600);
@@ -54,749 +60,461 @@ class ATK_Wait {
 }
 
 /* ================================ */
-/*   左到右                         */
+/*   基礎                           */
 /* ================================ */
-class ATK_L2R {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("LEFT => RIGHT");
-    clearInterval(ATK_L2R.interval);
-    ATK_L2R.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_L2R.res = res;
-      ATK_L2R.interval = setInterval(ATK_L2R.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    item_fall(ATK_L2R.cur_index);
-    ATK_L2R.cur_index++;
-    if(ATK_L2R.cur_index == 7) ATK_L2R.done();
-  }
-  static done() {
-    clearInterval(ATK_L2R.interval);
-    ATK_L2R.done_wait = setTimeout(() => ATK_L2R.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_L2R.interval);
-    clearTimeout(ATK_L2R.done_wait);
-  }
-  static hit_end() {
-    ATK_L2R.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_L2R.interval);
-    clearTimeout(ATK_L2R.done_wait);
-    ATK_L2R.res('stop');
-  }
-}
-atk_get.ATK_L2R = ATK_L2R;
-
-/* ================================ */
-/*   右到左                         */
-/* ================================ */
-class ATK_R2L {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("RIGHT => LEFT");
-    clearInterval(ATK_R2L.interval);
-    ATK_R2L.cur_index = 7;
-    return new Promise((res, rej) => {
-      ATK_R2L.res = res;
-      ATK_R2L.interval = setInterval(ATK_R2L.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    item_fall(ATK_R2L.cur_index);
-    ATK_R2L.cur_index--;
-    if(ATK_R2L.cur_index == 0) ATK_R2L.done();
-  }
-  static done() {
-    clearInterval(ATK_R2L.interval);
-    ATK_R2L.done_wait = setTimeout(() => ATK_R2L.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_R2L.interval);
-    clearTimeout(ATK_R2L.done_wait);
-  }
-  static hit_end() {
-    ATK_R2L.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_R2L.interval);
-    clearTimeout(ATK_R2L.done_wait);
-    ATK_R2L.res('stop');
-  }
-}
-atk_get.ATK_R2L = ATK_R2L;
-
-/* ================================ */
-/*   雙重左到右                     */
-/* ================================ */
-class ATK_double_L2R {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("double LEFT => RIGHT");
-    clearInterval(ATK_double_L2R.interval);
-    ATK_double_L2R.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_double_L2R.res = res;
-      ATK_double_L2R.interval = setInterval(ATK_double_L2R.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    switch(ATK_double_L2R.cur_index) {
-      case 0: item_fall_p([0, 4]); break;
-      case 1: item_fall_p([1, 5]); break;
-      case 2: item_fall_p([2, 6]); break;
-      case 3: item_fall_p([3, 7]); break;
-      case 4: item_fall_p([4, 0]); break;
-      case 5: item_fall_p([5, 1]); break;
-      case 6: item_fall_p([6, 2]); break;
-    }
-    ATK_double_L2R.cur_index++;
-    if(ATK_double_L2R.cur_index == 7) ATK_double_L2R.done();
-  }
-  static done() {
-    clearInterval(ATK_double_L2R.interval);
-    ATK_double_L2R.done_wait = setTimeout(() => ATK_double_L2R.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_double_L2R.interval);
-    clearTimeout(ATK_double_L2R.done_wait);
-  }
-  static hit_end() {
-    ATK_double_L2R.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_double_L2R.interval);
-    clearTimeout(ATK_double_L2R.done_wait);
-    ATK_double_L2R.res('stop');
-  }
-}
-atk_get.ATK_double_L2R = ATK_double_L2R;
-
-/* ================================ */
-/*   雙重右到左                     */
-/* ================================ */
-class ATK_double_R2L {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("double RIGHT => LEFT");
-    clearInterval(ATK_double_R2L.interval);
-    ATK_double_R2L.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_double_R2L.res = res;
-      ATK_double_R2L.interval = setInterval(ATK_double_R2L.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    switch(ATK_double_R2L.cur_index) {
-      case 0: item_fall_p([7, 3]); break;
-      case 1: item_fall_p([6, 2]); break;
-      case 2: item_fall_p([5, 1]); break;
-      case 3: item_fall_p([4, 0]); break;
-      case 4: item_fall_p([3, 7]); break;
-      case 5: item_fall_p([2, 6]); break;
-      case 6: item_fall_p([1, 5]); break;
-    }
-    ATK_double_R2L.cur_index++;
-    if(ATK_double_R2L.cur_index == 7) ATK_double_R2L.done();
-  }
-  static done() {
-    clearInterval(ATK_double_R2L.interval);
-    ATK_double_R2L.done_wait = setTimeout(() => ATK_double_R2L.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_double_R2L.interval);
-    clearTimeout(ATK_double_R2L.done_wait);
-  }
-  static hit_end() {
-    ATK_double_R2L.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_double_R2L.interval);
-    clearTimeout(ATK_double_R2L.done_wait);
-    ATK_double_R2L.res('stop');
-  }
-}
-atk_get.ATK_double_R2L = ATK_double_R2L;
-
-/* ================================ */
-/*   奇數偶數                       */
-/* ================================ */
-class ATK_OddEven {
+class ATK_base {
   static timeout = null;
   static cur_index = 0;
   static res = () => {};
-  static time = 300;
+  static time = 450;
   static done_wait = null;
+  static atk_count = 7;
+  static main_speed = 1;
+  static one_atk_time = 600;
   static start() {
-    tip("1 => 3 => 5 => 7");
-    clearTimeout(ATK_OddEven.timeout);
-    ATK_OddEven.cur_index = 0;
-    ATK_OddEven.time = 450 * main_speed;
+    this.cur_index = 0;
+    this.init();
+    clearTimeout(this.timeout);
     return new Promise((res, rej) => {
-      ATK_OddEven.res = res;
-      ATK_OddEven.tick();
+      this.res = res;
+      this.set_tick();
     });
   }
-  static tick() {
-    ATK_OddEven.timeout = setTimeout(() => {
-      switch(ATK_OddEven.cur_index) {
-        case 0: item_fall(0); break;
-        case 1: item_fall(2); break;
-        case 2: item_fall(4); break;
-        case 3: item_fall(6); break;
-        case 4: item_fall(2); ATK_OddEven.time = 690 * main_speed; break;
-        case 5: tip("2 4 6 8"); item_fall_p([1, 3, 5, 7]); break;
-        case 6: tip("1 3 5 7"); item_fall_p([0, 2, 4, 6]); break;
-      }
-      ATK_OddEven.cur_index++;
-      if(ATK_OddEven.cur_index == 7) ATK_OddEven.done();
-      else ATK_OddEven.tick();
-    }, ATK_OddEven.time);
+  static set_time(time) {
+    this.time = time * ATK_base.main_speed;
   }
-  static done() {
-    clearTimeout(ATK_OddEven.timeout);
-    ATK_OddEven.done_wait = setTimeout(() => ATK_OddEven.res('done'), one_atk_time);
+  static init() {
+    tip("test");
+    this.set_time(450);
   }
-  static hit_stop() {
-    clearTimeout(ATK_OddEven.timeout);
-    clearTimeout(ATK_OddEven.done_wait);
+  static set_tick() {
+    this.timeout = setTimeout(() => {
+      this.tick(this.cur_index);
+      this.cur_index++;
+      if(this.cur_index == this.atk_count) this.done();
+      else this.set_tick();
+    }, this.time);
   }
-  static hit_end() {
-    ATK_OddEven.res('hit');
-  }
-  static game_stop() {
-    clearTimeout(ATK_OddEven.timeout);
-    clearTimeout(ATK_OddEven.done_wait);
-    ATK_OddEven.res('stop');
-  }
-}
-atk_get.ATK_OddEven = ATK_OddEven;
-
-/* ================================ */
-/*   奇數偶數 整排                  */
-/* ================================ */
-class ATK_OddEven_2 {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("ODD & EVEN");
-    clearInterval(ATK_OddEven_2.interval);
-    ATK_OddEven_2.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_OddEven_2.res = res;
-      ATK_OddEven_2.interval = setInterval(ATK_OddEven_2.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    switch(ATK_OddEven_2.cur_index) {
-      case 0: item_fall_p([0, 2, 4, 6]); break;
-      case 1: item_fall_p([1, 3, 5, 7]); break;
-      case 2: item_fall_p([0, 2, 4, 6]); break;
-      case 3: item_fall_p([1, 3, 5, 7]); break;
+  static tick(i) {
+    switch(i) {
+      case 0: item_fall(0); break;
+      case 1: item_fall(2); break;
+      case 2: item_fall(4); break;
+      case 3: item_fall(6); break;
+      case 4: item_fall(2); this.set_time(690); break;
+      case 5: tip("2 4 6 8"); item_fall_p([1, 3, 5, 7]); break;
+      case 6: tip("1 3 5 7"); item_fall_p([0, 2, 4, 6]); break;
     }
-    ATK_OddEven_2.cur_index++;
-    if(ATK_OddEven_2.cur_index == 4) ATK_OddEven_2.done();
   }
   static done() {
-    clearInterval(ATK_OddEven_2.interval);
-    ATK_OddEven_2.done_wait = setTimeout(() => ATK_OddEven_2.res('done'), one_atk_time);
+    clearTimeout(this.timeout);
+    this.done_wait = setTimeout(() => {
+      this.end_init();
+      this.res('done');
+    }, ATK_base.one_atk_time);
   }
   static hit_stop() {
-    clearInterval(ATK_OddEven_2.interval);
-    clearTimeout(ATK_OddEven_2.done_wait);
+    clearTimeout(this.timeout);
+    clearTimeout(this.done_wait);
   }
   static hit_end() {
-    ATK_OddEven_2.res('hit');
+    this.end_init();
+    this.res('hit');
   }
   static game_stop() {
-    clearInterval(ATK_OddEven_2.interval);
-    clearTimeout(ATK_OddEven_2.done_wait);
-    ATK_OddEven_2.res('stop');
+    clearTimeout(this.timeout);
+    clearTimeout(this.done_wait);
+    this.end_init();
+    this.res('stop');
+  }
+  static end_init() {}
+}
+atk_get.ATK_base = ATK_base;
+
+// 測試
+class ATK_test extends ATK_base {
+  static atk_count = 10;
+  static init() {
+    tip("KASKASK");
+    this.set_time(240);
+  }
+  static tick(i) {
+    item_fall(0);
+    // switch(i) {
+      // case 0: item_fall_p([1, 2, 3]); break;
+      // case 1: item_fall_p([4, 5, 6, 7]); break;
+    // }
   }
 }
-atk_get.ATK_OddEven_2 = ATK_OddEven_2;
+atk_get.ATK_test = ATK_test;
 
 /* ================================ */
-/*   位置追蹤                       */
+/*   左右系列                       */
 /* ================================ */
-class ATK_YouPosition {
-  static interval = null;
-  static count = 10;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("your position");
-    clearInterval(ATK_YouPosition.interval);
-    ATK_YouPosition.count = 10;
-    return new Promise((res, rej) => {
-      ATK_YouPosition.res = res;
-      ATK_YouPosition.interval = setInterval(ATK_YouPosition.tick, 750 * main_speed);
-    });
+
+// 左到右
+atk_get.ATK_L2R = class extends ATK_base {
+  static atk_count = 7;
+  static init() {
+    tip("LEFT => RIGHT");
+    this.set_time(450);
   }
-  static tick() {
-    item_fall(cur_pos);
-    ATK_YouPosition.count--;
-    if(!ATK_YouPosition.count) ATK_YouPosition.done();
-  }
-  static done() {
-    clearInterval(ATK_YouPosition.interval);
-    ATK_YouPosition.done_wait = setTimeout(() => ATK_YouPosition.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_YouPosition.interval);
-    clearTimeout(ATK_YouPosition.done_wait);
-  }
-  static hit_end() {
-    ATK_YouPosition.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_YouPosition.interval);
-    clearTimeout(ATK_YouPosition.done_wait);
-    ATK_YouPosition.res('stop');
+  static tick(i) {
+    item_fall(i);
   }
 }
-atk_get.ATK_YouPosition = ATK_YouPosition;
 
-/* ================================ */
-/*   雙重位置追蹤                   */
-/* ================================ */
-class ATK_double_YouPosition {
-  static interval = null;
-  static count = 5;
-  static res = () => {};
-  static done_wait = null;
-  static prev_pos = null;
-  static start() {
-    tip("your position");
-    clearInterval(ATK_double_YouPosition.interval);
-    ATK_double_YouPosition.count = 5;
-    ATK_double_YouPosition.prev_pos = null;
-    return new Promise((res, rej) => {
-      ATK_double_YouPosition.res = res;
-      ATK_double_YouPosition.interval = setInterval(ATK_double_YouPosition.tick, 750 * main_speed);
-    });
+// 右到左
+atk_get.ATK_R2L = class extends ATK_base {
+  static atk_count = 7;
+  static init() {
+    tip("RIGHT => LEFT");
+    this.set_time(450);
   }
-  static tick() {
-    if(ATK_double_YouPosition.prev_pos != null && ATK_double_YouPosition.prev_pos != cur_pos) {
-      item_fall_p([ATK_double_YouPosition.prev_pos, cur_pos]);
-    }
-    else item_fall(cur_pos);
-    ATK_double_YouPosition.prev_pos = cur_pos;
-    ATK_double_YouPosition.count--;
-    if(!ATK_double_YouPosition.count) ATK_double_YouPosition.done();
-  }
-  static done() {
-    clearInterval(ATK_double_YouPosition.interval);
-    ATK_double_YouPosition.done_wait = setTimeout(() => ATK_double_YouPosition.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_double_YouPosition.interval);
-    clearTimeout(ATK_double_YouPosition.done_wait);
-  }
-  static hit_end() {
-    ATK_double_YouPosition.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_double_YouPosition.interval);
-    clearTimeout(ATK_double_YouPosition.done_wait);
-    ATK_double_YouPosition.res('stop');
+  static tick(i) {
+    item_fall(7 - i);
   }
 }
-atk_get.ATK_double_YouPosition = ATK_double_YouPosition;
 
-/* ================================ */
-/*   4個並排                        */
-/* ================================ */
-class ATK_4 {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("1 2 3 4");
-    clearInterval(ATK_4.interval);
-    ATK_4.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_4.res = res;
-      ATK_4.interval = setInterval(ATK_4.tick, 600 * main_speed);
-    });
+// 雙重左到右
+atk_get.ATK_double_L2R = class extends ATK_base {
+  static atk_count = 7;
+  static init() {
+    tip("double LEFT => RIGHT");
+    this.set_time(450);
   }
-  static tick() {
-    switch(ATK_4.cur_index) {
-      case 0: item_fall_p([0, 1, 2, 3]); break;
-      case 1: tip("5 6 7 8"); item_fall_p([4, 5, 6, 7]); break;
-    }
-    ATK_4.cur_index++;
-    if(ATK_4.cur_index == 2) ATK_4.done();
-  }
-  static done() {
-    clearInterval(ATK_4.interval);
-    ATK_4.done_wait = setTimeout(() => ATK_4.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_4.interval);
-    clearTimeout(ATK_4.done_wait);
-  }
-  static hit_end() {
-    ATK_4.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_4.interval);
-    clearTimeout(ATK_4.done_wait);
-    ATK_4.res('stop');
+  static tick(i) {
+    item_fall_p([i, (i + 4) % 8]);
   }
 }
-atk_get.ATK_4 = ATK_4;
 
-/* ================================ */
-/*   裡到外                         */
-/* ================================ */
-class ATK_I2O {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("IN => OUT");
-    clearInterval(ATK_I2O.interval);
-    ATK_I2O.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_I2O.res = res;
-      ATK_I2O.interval = setInterval(ATK_I2O.tick, 450 * main_speed);
-    });
+// 雙重右到左
+atk_get.ATK_double_R2L = class extends ATK_base {
+  static atk_count = 7;
+  static init() {
+    tip("double RIGHT => LEFT");
+    this.set_time(450);
   }
-  static tick() {
-    switch(ATK_I2O.cur_index) {
-      case 0: item_fall(3); break;
-      case 1: item_fall(4); break;
-      case 2: item_fall(2); break;
-      case 3: item_fall(5); break;
-      case 4: item_fall(1); break;
-      case 5: item_fall(6); break;
-      case 6: item_fall(0); break;
-      case 7: item_fall(7); break;
-    }
-    ATK_I2O.cur_index++;
-    if(ATK_I2O.cur_index == 8) ATK_I2O.done();
-  }
-  static done() {
-    clearInterval(ATK_I2O.interval);
-    ATK_I2O.done_wait = setTimeout(() => ATK_I2O.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_I2O.interval);
-    clearTimeout(ATK_I2O.done_wait);
-  }
-  static hit_end() {
-    ATK_I2O.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_I2O.interval);
-    clearTimeout(ATK_I2O.done_wait);
-    ATK_I2O.res('stop');
+  static tick(i) {
+    item_fall_p([7 - i, (7 - i + 4) % 8]);
   }
 }
-atk_get.ATK_I2O = ATK_I2O;
 
-/* ================================ */
-/*   外到裡                         */
-/* ================================ */
-class ATK_O2I {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("OUT => IN");
-    clearInterval(ATK_O2I.interval);
-    ATK_O2I.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_O2I.res = res;
-      ATK_O2I.interval = setInterval(ATK_O2I.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    switch(ATK_O2I.cur_index) {
-      case 0: item_fall(7); break;
-      case 1: item_fall(0); break;
-      case 2: item_fall(6); break;
-      case 3: item_fall(1); break;
-      case 4: item_fall(5); break;
-      case 5: item_fall(2); break;
-      case 6: item_fall(4); break;
-      case 7: item_fall(3); break;
-    }
-    ATK_O2I.cur_index++;
-    if(ATK_O2I.cur_index == 8) ATK_O2I.done();
-  }
-  static done() {
-    clearInterval(ATK_O2I.interval);
-    ATK_O2I.done_wait = setTimeout(() => ATK_O2I.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_O2I.interval);
-    clearTimeout(ATK_O2I.done_wait);
-  }
-  static hit_end() {
-    ATK_O2I.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_O2I.interval);
-    clearTimeout(ATK_O2I.done_wait);
-    ATK_O2I.res('stop');
-  }
-}
-atk_get.ATK_O2I = ATK_O2I;
-
-/* ================================ */
-/*   雙重裡到外                     */
-/* ================================ */
-class ATK_double_I2O {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("double IN => OUT");
-    clearInterval(ATK_double_I2O.interval);
-    ATK_double_I2O.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_double_I2O.res = res;
-      ATK_double_I2O.interval = setInterval(ATK_double_I2O.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    switch(ATK_double_I2O.cur_index) {
-      case 0: item_fall_p([3, 4]); break;
-      case 1: item_fall_p([2, 5]); break;
-      case 2: item_fall_p([1, 6]); break;
-      case 3: item_fall_p([0, 7]); break;
-      case 4: item_fall_p([3, 4]); break;
-      case 5: item_fall_p([2, 5]); break;
-      case 6: item_fall_p([1, 6]); break;
-      case 7: item_fall_p([0, 7]); break;
-    }
-    ATK_double_I2O.cur_index++;
-    if(ATK_double_I2O.cur_index == 8) ATK_double_I2O.done();
-  }
-  static done() {
-    clearInterval(ATK_double_I2O.interval);
-    ATK_double_I2O.done_wait = setTimeout(() => ATK_double_I2O.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_double_I2O.interval);
-    clearTimeout(ATK_double_I2O.done_wait);
-  }
-  static hit_end() {
-    ATK_double_I2O.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_double_I2O.interval);
-    clearTimeout(ATK_double_I2O.done_wait);
-    ATK_double_I2O.res('stop');
-  }
-}
-atk_get.ATK_double_I2O = ATK_double_I2O;
-
-/* ================================ */
-/*   雙重外到裡                     */
-/* ================================ */
-class ATK_double_O2I {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("double OUT => IN");
-    clearInterval(ATK_double_O2I.interval);
-    ATK_double_O2I.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_double_O2I.res = res;
-      ATK_double_O2I.interval = setInterval(ATK_double_O2I.tick, 450 * main_speed);
-    });
-  }
-  static tick() {
-    switch(ATK_double_O2I.cur_index) {
-      case 0: item_fall_p([0, 7]); break;
-      case 1: item_fall_p([1, 6]); break;
-      case 2: item_fall_p([2, 5]); break;
-      case 3: item_fall_p([3, 4]); break;
-      case 4: item_fall_p([0, 7]); break;
-      case 5: item_fall_p([1, 6]); break;
-      case 6: item_fall_p([2, 5]); break;
-      case 7: item_fall_p([3, 4]); break;
-    }
-    ATK_double_O2I.cur_index++;
-    if(ATK_double_O2I.cur_index == 8) ATK_double_O2I.done();
-  }
-  static done() {
-    clearInterval(ATK_double_O2I.interval);
-    ATK_double_O2I.done_wait = setTimeout(() => ATK_double_O2I.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_double_O2I.interval);
-    clearTimeout(ATK_double_O2I.done_wait);
-  }
-  static hit_end() {
-    ATK_double_O2I.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_double_O2I.interval);
-    clearTimeout(ATK_double_O2I.done_wait);
-    ATK_double_O2I.res('stop');
-  }
-}
-atk_get.ATK_double_O2I = ATK_double_O2I;
-
-/* ================================ */
-/*   左到右追蹤                     */
-/* ================================ */
-class ATK_L2R_YouPosition {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
+// 左到右追蹤
+atk_get.ATK_L2R_YouPosition = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
     tip("LEFT => RIGHT & you position");
-    clearInterval(ATK_L2R_YouPosition.interval);
-    ATK_L2R_YouPosition.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_L2R_YouPosition.res = res;
-      ATK_L2R_YouPosition.interval = setInterval(ATK_L2R_YouPosition.tick, 450 * main_speed);
-    });
+    this.set_time(450);
   }
-  static tick() {
-    if(ATK_L2R_YouPosition.cur_index % 2) {
-      item_fall_p([ATK_L2R_YouPosition.cur_index, cur_pos]);
+  static tick(i) {
+    if(i % 2) {
+      item_fall_p([i, cur_pos]);
     }
-    else item_fall(ATK_L2R_YouPosition.cur_index);
-    ATK_L2R_YouPosition.cur_index++;
-    if(ATK_L2R_YouPosition.cur_index == 8) ATK_L2R_YouPosition.done();
-  }
-  static done() {
-    clearInterval(ATK_L2R_YouPosition.interval);
-    ATK_L2R_YouPosition.done_wait = setTimeout(() => ATK_L2R_YouPosition.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_L2R_YouPosition.interval);
-    clearTimeout(ATK_L2R_YouPosition.done_wait);
-  }
-  static hit_end() {
-    ATK_L2R_YouPosition.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_L2R_YouPosition.interval);
-    clearTimeout(ATK_L2R_YouPosition.done_wait);
-    ATK_L2R_YouPosition.res('stop');
+    else item_fall(i);
   }
 }
-atk_get.ATK_L2R_YouPosition = ATK_L2R_YouPosition;
 
 /* ================================ */
-/*   奇數 + 追蹤                    */
+/*   奇偶系列                       */
 /* ================================ */
-class ATK_Odd_YouPosition {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
-    tip("ODD & your position");
-    clearInterval(ATK_Odd_YouPosition.interval);
-    ATK_Odd_YouPosition.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_Odd_YouPosition.res = res;
-      ATK_Odd_YouPosition.interval = setInterval(ATK_Odd_YouPosition.tick, 450 * main_speed);
-    });
+
+// 13573
+atk_get.ATK_OddEven = class extends ATK_base {
+  static atk_count = 7;
+  static init() {
+    tip("1 => 3 => 5 => 7");
+    this.set_time(450);
   }
-  static tick() {
-    switch(ATK_Odd_YouPosition.cur_index) {
+  static tick(i) {
+    switch(i) {
+      case 0: item_fall(0); break;
+      case 1: item_fall(2); break;
+      case 2: item_fall(4); break;
+      case 3: item_fall(6); break;
+      case 4: item_fall(2); this.set_time(690); break;
+      case 5: tip("2 4 6 8"); item_fall_p([1, 3, 5, 7]); break;
+      case 6: tip("1 3 5 7"); item_fall_p([0, 2, 4, 6]); break;
+    }
+  }
+}
+
+// 1357 2468
+atk_get.ATK_OddEven_2 = class extends ATK_base {
+  static atk_count = 4;
+  static init() {
+    tip("ODD & EVEN");
+    this.set_time(450);
+  }
+  static tick(i) {
+    let target = [
+      [0, 2, 4, 6],
+      [1, 3, 5, 7],
+    ][i % 2];
+    item_fall_p(target);
+  }
+}
+
+// 奇數追蹤
+atk_get.ATK_Odd_YouPosition = class extends ATK_base {
+  static atk_count = 4;
+  static init() {
+    tip("ODD & your position");
+    this.set_time(450);
+  }
+  static tick(i) {
+    switch(i) {
       case 0: item_fall_p([0, 2]); break;
       case 1: item_fall_p([2, 4, cur_pos]); break;
       case 2: item_fall_p([4, 6]); break;
       case 3: item_fall(cur_pos); break;
     }
-    ATK_Odd_YouPosition.cur_index++;
-    if(ATK_Odd_YouPosition.cur_index == 4) ATK_Odd_YouPosition.done();
-  }
-  static done() {
-    clearInterval(ATK_Odd_YouPosition.interval);
-    ATK_Odd_YouPosition.done_wait = setTimeout(() => ATK_Odd_YouPosition.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_Odd_YouPosition.interval);
-    clearTimeout(ATK_Odd_YouPosition.done_wait);
-  }
-  static hit_end() {
-    ATK_Odd_YouPosition.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_Odd_YouPosition.interval);
-    clearTimeout(ATK_Odd_YouPosition.done_wait);
-    ATK_Odd_YouPosition.res('stop');
   }
 }
-atk_get.ATK_Odd_YouPosition = ATK_Odd_YouPosition;
 
-/* ================================ */
-/*   偶數 + 追蹤                    */
-/* ================================ */
-class ATK_Even_YouPosition {
-  static interval = null;
-  static cur_index = 0;
-  static res = () => {};
-  static done_wait = null;
-  static start() {
+// 偶數追蹤
+atk_get.ATK_Even_YouPosition = class extends ATK_base {
+  static atk_count = 4;
+  static init() {
     tip("EVEN & your position");
-    clearInterval(ATK_Even_YouPosition.interval);
-    ATK_Even_YouPosition.cur_index = 0;
-    return new Promise((res, rej) => {
-      ATK_Even_YouPosition.res = res;
-      ATK_Even_YouPosition.interval = setInterval(ATK_Even_YouPosition.tick, 450 * main_speed);
-    });
+    this.set_time(450);
   }
-  static tick() {
-    switch(ATK_Even_YouPosition.cur_index) {
+  static tick(i) {
+    switch(i) {
       case 0: item_fall_p([1, 3]); break;
       case 1: item_fall_p([3, 5, cur_pos]); break;
       case 2: item_fall_p([5, 7]); break;
       case 3: item_fall(cur_pos); break;
     }
-    ATK_Even_YouPosition.cur_index++;
-    if(ATK_Even_YouPosition.cur_index == 4) ATK_Even_YouPosition.done();
-  }
-  static done() {
-    clearInterval(ATK_Even_YouPosition.interval);
-    ATK_Even_YouPosition.done_wait = setTimeout(() => ATK_Even_YouPosition.res('done'), one_atk_time);
-  }
-  static hit_stop() {
-    clearInterval(ATK_Even_YouPosition.interval);
-    clearTimeout(ATK_Even_YouPosition.done_wait);
-  }
-  static hit_end() {
-    ATK_Even_YouPosition.res('hit');
-  }
-  static game_stop() {
-    clearInterval(ATK_Even_YouPosition.interval);
-    clearTimeout(ATK_Even_YouPosition.done_wait);
-    ATK_Even_YouPosition.res('stop');
   }
 }
-atk_get.ATK_Even_YouPosition = ATK_Even_YouPosition;
+
+// 奇偶與右到左
+atk_get.ATK_OddEven_R2L = class extends ATK_base {
+  static atk_count = 13;
+  static init() {
+    tip("ODD & EVEN & RIGHT => LEFT");
+    this.set_time(450);
+  }
+  static tick(i) {
+    switch(i) {
+      case  0: item_fall_p([0, 2, 4, 6, 7]); break;
+      case  1: item_fall_p([1, 3, 5, 7, 6]); break;
+      case  3: item_fall_p([0, 2, 4, 6, 5]); break;
+      case  4: item_fall_p([1, 3, 5, 7, 4]); break;
+      case  6: item_fall_p([0, 2, 4, 6, 3]); break;
+      case  7: item_fall_p([1, 3, 5, 7, 2]); break;
+      case  9: item_fall_p([0, 2, 4, 6, 1]); break;
+      case 10: item_fall_p([1, 3, 5, 7, 0]); break;
+    }
+    if(i == 12) {
+      ItemObj.skin('amen');
+      item_fall(cur_pos);
+    }
+  }
+}
+
+// 奇偶與左到右
+atk_get.ATK_OddEven_L2R = class extends ATK_base {
+  static atk_count = 9;
+  static init() {
+    tip("EVEN & ODD & LEFT => RIGHT");
+    this.set_time(450);
+  }
+  static tick(i) {
+    switch(i) {
+      case  0: item_fall_p([1, 3, 5, 7, 0]); break;
+      case  1: item_fall_p([0, 2, 4, 6, 1]); this.set_time(1500); break;
+      case  2: item_fall_p([1, 3, 5, 7, 2]); this.set_time(450); break;
+      case  3: item_fall_p([0, 2, 4, 6, 3]); this.set_time(1500); break;
+      case  4: item_fall_p([1, 3, 5, 7, 4]); this.set_time(450); break;
+      case  5: item_fall_p([0, 2, 4, 6, 5]); this.set_time(1500); break;
+      case  6: item_fall_p([1, 3, 5, 7, 6]); this.set_time(450); break;
+      case  7: item_fall_p([0, 2, 4, 6, 7]); this.set_time(1500); break;
+    }
+    if(i == 8) {
+      tip('AMEN');
+      ItemObj.skin('amen');
+      item_fall(cur_pos);
+    }
+  }
+}
+
+/* ================================ */
+/*   追蹤系列                       */
+/* ================================ */
+
+// 位置追蹤
+atk_get.ATK_YouPosition = class extends ATK_base {
+  static atk_count = 10;
+  static init() {
+    tip("your position");
+    this.set_time(750);
+  }
+  static tick(i) {
+    item_fall(cur_pos);
+  }
+}
+
+// 雙重位置追蹤
+atk_get.ATK_double_YouPosition = class extends ATK_base {
+  static atk_count = 5;
+  static prev_pos = null;
+  static init() {
+    tip("double your position");
+    this.set_time(750);
+    this.prev_pos = null;
+  }
+  static tick(i) {
+    if(this.prev_pos != null && this.prev_pos != cur_pos) {
+      item_fall_p([this.prev_pos, cur_pos]);
+    }
+    else item_fall(cur_pos);
+    this.prev_pos = cur_pos;
+  }
+}
+
+// 雙重位置追蹤 10次
+atk_get.ATK_Reiji = class extends ATK_base {
+  static atk_count = 10;
+  static prev_pos = null;
+  static init() {
+    tip("double your position");
+    this.set_time(820);
+    this.prev_pos = null;
+  }
+  static tick(i) {
+    ItemObj.skin('amen');
+    if(this.prev_pos != null && this.prev_pos != cur_pos) {
+      item_fall_p([cur_pos, this.prev_pos]);
+    }
+    else item_fall(cur_pos);
+    this.prev_pos = cur_pos;
+  }
+}
+
+// 三倍位置追蹤
+class ATK_triple_YouPosition extends ATK_base {
+  static atk_count = 5;
+  static init() {
+    tip("triple your position");
+    this.set_time(750);
+  }
+  static tick(i) {
+    item_fall_p([cur_pos - 2, cur_pos, cur_pos + 2]);
+  }
+}
+atk_get.ATK_triple_YouPosition = ATK_triple_YouPosition;
+
+/* ================================ */
+/*   裡外系列                       */
+/* ================================ */
+
+// 裡到外
+atk_get.ATK_I2O = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
+    tip("IN => OUT");
+    this.set_time(450);
+  }
+  static tick(i) {
+    item_fall(+("34251607"[i]));
+  }
+}
+
+// 外到裡
+atk_get.ATK_O2I = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
+    tip("OUT => IN");
+    this.set_time(450);
+  }
+  static tick(i) {
+    item_fall(+("70615243"[i]));
+  }
+}
+
+// 雙重裡到外
+atk_get.ATK_double_I2O = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
+    tip("double IN => OUT");
+    this.set_time(450);
+  }
+  static tick(i) {
+    let offset = i % 4;
+    item_fall_p([3 - offset, 4 + offset]);
+  }
+}
+
+// 雙重外到裡
+atk_get.ATK_double_O2I = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
+    tip("double OUT => IN");
+    this.set_time(450);
+  }
+  static tick(i) {
+    let offset = i % 4;
+    item_fall_p([0 + offset, 7 - offset]);
+  }
+}
+
+// 外到內到外
+atk_get.ATK_O2I2O = class extends ATK_base {
+  static atk_count = 7;
+  static init() {
+    tip("OUT => IN => OUT");
+    this.set_time(450);
+  }
+  static tick(i) {
+    switch(i) {
+      case 0: item_fall_p([0, 7]); break;
+      case 1: item_fall_p([1, 6]); break;
+      case 2: item_fall_p([2, 5]); break;
+      case 3: item_fall_p([3, 4]); break;
+      case 4: item_fall_p([2, 5]); break;
+      case 5: item_fall_p([1, 6]); break;
+      case 6: item_fall_p([0, 7]); break;
+    }
+  }
+}
+
+// 內到外到內
+atk_get.ATK_I2O2I = class extends ATK_base {
+  static atk_count = 7;
+  static init() {
+    tip("IN => OUT => IN");
+    this.set_time(450);
+  }
+  static tick(i) {
+    switch(i) {
+      case 0: item_fall_p([3, 4]); break;
+      case 1: item_fall_p([2, 5]); break;
+      case 2: item_fall_p([1, 6]); break;
+      case 3: item_fall_p([0, 7]); break;
+      case 4: item_fall_p([1, 6]); break;
+      case 5: item_fall_p([2, 5]); break;
+      case 6: item_fall_p([3, 4]); break;
+    }
+  }
+}
+
+/* ================================ */
+/*   無系列                         */
+/* ================================ */
+
+// 4個並排
+atk_get.ATK_4 = class extends ATK_base {
+  static atk_count = 2;
+  static init() {
+    tip("1 2 3 4");
+    this.set_time(600);
+  }
+  static tick(i) {
+    switch(i) {
+      case 0: item_fall_p([0, 1, 2, 3]); break;
+      case 1: tip("5 6 7 8"); item_fall_p([4, 5, 6, 7]); break;
+    }
+  }
+}

@@ -19,6 +19,36 @@
 }
 
 /* ================================ */
+/*   嘉納扇                         */
+/* ================================ */
+#root[name="嘉納扇"] {
+  background-image: url(./img/bg/病房.png);
+  --c_img: url(./img/move/嘉納.gif);
+  --c_img_a: url(./img/move/嘉納a.png);
+  --c_img_b: url(./img/move/嘉納b.png);
+}
+#root[name="嘉納扇"] #character {
+  filter: sepia(0.2) drop-shadow(1px 1px 1px #0003);
+}
+#root[name="嘉納扇"] #kanou {
+  filter: brightness(1.03) drop-shadow(1px 1px 1px #0003);
+}
+#root[name="嘉納扇"] #items {
+  z-index: 1;
+}
+#root[name="嘉納扇"] .item:after {
+  bottom: 0px;
+  width: 32px;
+  height: 32px;
+  background: url(./img/item/手術刀.png);
+  filter: brightness(1.05) drop-shadow(0 0 1px #fffA);
+}
+#root[name="嘉納扇"]:after {
+  backdrop-filter: brightness(0.9);
+  background: #f001;
+}
+
+/* ================================ */
 /*   磯井麗慈                       */
 /* ================================ */
 #root[name="磯井麗慈"] {
@@ -51,4 +81,43 @@
   width: 32px;
   height: 43px;
   background: url(./img/item/信封.png);
+}
+
+/* ================================ */
+/*   宇津木德幸                     */
+/* ================================ */
+#root[name="宇津木德幸"] #character {
+  width: 352px;
+  height: 256px;
+  margin-left: -128px;
+  transform: scaleX(-1);
+}
+#root[name="宇津木德幸"] #character.r {
+  transform: scaleX(1);
+}
+#root[name="宇津木德幸"] {
+  background-image: url(./img/bg/鐵鏽水管冰.png);
+  --c_img: url(./img/move/宇津木.gif);
+  --c_img_a: url(./img/move/宇津木a.png);
+  --c_img_b: url(./img/move/宇津木b.png);
+}
+#root[name="宇津木德幸"] .item:after {
+  bottom: -32px;
+  left: -32px;
+  width: 96px;
+  height: 128px;
+  background: url(./img/item/十字架.png);
+}
+#root[name="宇津木德幸"] .item.amen:after {
+  background: url(./img/item/十字架麗慈.png);
+}
+#root[name="宇津木德幸"]:after {
+  background: #F002;
+  backdrop-filter: brightness(1.2);
+}
+#root[name="宇津木德幸"].hit:after {
+  background: #F004 !important;
+}
+#character_image[src*="宇津木德幸"]:not(.lock) {
+  content: url(./img/character/宇津木德幸-血.png);
 }

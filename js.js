@@ -9,7 +9,6 @@ window.onload = () => {
     }
   });
   find('#character').style.setProperty('--pos', cur_pos = 4);
-  item_init();
   view_character(cur_character_index = 0);
 };
 
@@ -101,128 +100,6 @@ function text_hide() {
 /* ================================ */
 var in_title = true, selecting = false;
 var cur_character_index = 0;
-const character_list = [
-  {
-    name: "阿藤春樹",
-    skin: "阿藤春樹",
-    lock: false,
-    unlock: ["磯井麗慈", "磯井麗慈 (困難版)"],
-    tip: true,
-    hp: 3,
-    time: 60,
-    start_pos: 4,
-    fall_before_time: 300,
-    fall_speed: 28,
-    main_speed: 1,
-    wait_time: 800,
-    se_fall: "冰",
-    se_move: "風",
-    atk_list: [
-      "ATK_L2R", "ATK_R2L", "ATK_OddEven", "ATK_YouPosition",
-      "ATK_4", "ATK_I2O",
-    ],
-  },
-  {
-    name: "阿藤春樹 (困難版)",
-    skin: "阿藤春樹",
-    lock: false,
-    unlock: ["磯井麗慈", "磯井麗慈 (困難版)"],
-    tip: false,
-    hp: 3,
-    time: 100,
-    start_pos: 4,
-    fall_before_time: 100,
-    fall_speed: 18,
-    main_speed: 0.7,
-    wait_time: 460,
-    se_fall: "冰",
-    se_move: "風",
-    atk_list: [
-      "ATK_L2R", "ATK_R2L", "ATK_OddEven", "ATK_YouPosition",
-      "ATK_4", "ATK_I2O",
-    ],
-  },
-  {
-    name: "磯井麗慈",
-    skin: "磯井麗慈",
-    lock: true,
-    unlock: ["磯井實光", "磯井實光 (困難版)"],
-    tip: true,
-    hp: 5,
-    time: 100,
-    start_pos: 4,
-    fall_before_time: 300,
-    fall_speed: 28,
-    main_speed: 1,
-    wait_time: 800,
-    se_fall: "岩石",
-    se_move: "鐵鍊",
-    atk_list: [
-      "ATK_O2I", "ATK_I2O", "ATK_double_O2I", "ATK_double_I2O",
-      "ATK_L2R_YouPosition",
-    ],
-  },
-  {
-    name: "磯井麗慈 (困難版)",
-    skin: "磯井麗慈",
-    lock: true,
-    unlock: ["磯井實光", "磯井實光 (困難版)"],
-    tip: false,
-    hp: 3,
-    time: 120,
-    start_pos: 4,
-    fall_before_time: 300,
-    fall_speed: 18,
-    main_speed: 0.7,
-    wait_time: 460,
-    se_fall: "岩石",
-    se_move: "鐵鍊",
-    atk_list: [
-      "ATK_O2I", "ATK_I2O", "ATK_double_O2I", "ATK_double_I2O",
-      "ATK_L2R_YouPosition",
-    ],
-  },
-  {
-    name: "磯井實光",
-    skin: "磯井實光",
-    lock: true,
-    tip: true,
-    hp: 5,
-    time: 60,
-    start_pos: 4,
-    fall_before_time: 300,
-    fall_speed: 28,
-    main_speed: 1,
-    wait_time: 800,
-    se_fall: "翻頁",
-    se_move: "咻",
-    atk_list: [
-      "ATK_double_L2R", "ATK_Odd_YouPosition",
-      "ATK_double_R2L", "ATK_Even_YouPosition",
-      "ATK_OddEven_2", "ATK_double_YouPosition",
-    ],
-  },
-  {
-    name: "磯井實光 (困難版)",
-    skin: "磯井實光",
-    lock: true,
-    tip: true,
-    hp: 3,
-    time: 100,
-    start_pos: 3,
-    fall_before_time: 300,
-    fall_speed: 18,
-    main_speed: 0.7,
-    wait_time: 460,
-    se_fall: "翻頁",
-    se_move: "咻",
-    atk_list: [
-      "ATK_double_L2R", "ATK_Odd_YouPosition",
-      "ATK_double_R2L", "ATK_Even_YouPosition",
-      "ATK_OddEven_2", "ATK_double_YouPosition",
-    ],
-  },
-];
 function unlock_character(target_names) {
   if(!Array.isArray(target_names)) target_names = [target_names];
   let unlock_count = target_names.map(name => {
@@ -261,7 +138,7 @@ function select_character(direction) {
 function view_character() {
   let character = character_list[cur_character_index];
   find('#character_name span').innerText = character.name;
-  find('#character_image').src = `./img/character/${character.skin}.png`;
+  find('#character_image').src = `./img/character/${character.title_img || character.skin}.png`;
   find('#character_image').classList.toggle('lock', character.lock);
   find('#character_name').classList.toggle('lock', character.lock);
 }
@@ -281,11 +158,9 @@ function character_data_read(character) {
   hp = character.hp;
   time = character.time;
   find('#character').style.setProperty('--pos', cur_pos = character.start_pos);
-  fall_before_time = character.fall_before_time;
-  fall_speed = character.fall_speed;
-  main_speed = character.main_speed;
-  one_atk_time = fall_before_time + fall_speed * item_max_pos;
-  item_set_interval();
+  ATK_base.main_speed = character.main_speed;
+  ItemObj.set_before_time(character.fall_before_time);
+  ItemObj.set_fall_speed(character.fall_speed);
   find('#se_fall').src = `./audio/${character.se_fall}.mp3`;
   find('#se_move').src = `./audio/${character.se_move}.mp3`;
   ATK_Wait.wait_time = character.wait_time;
@@ -324,75 +199,86 @@ async function game_run() {
 /* ================================ */
 /*   攻擊物件                       */
 /* ================================ */
-const item_atk_pos = 9;
-const item_max_pos = 23;
-const items_state = [];
-var main_speed = 1;
-var fall_before_time = 100;
-var fall_speed = 28;
-var one_atk_time = fall_before_time + fall_speed * item_max_pos;
-function item_init() {
-  let els = find_all('.item');
-  for(let f=0; f<8; f++) {
-    let item = {
-      pos: 0,
-      el: els[f],
-      falling: false,
-      wait: null,
-    };
-    items_state[f] = item;
-  }
-  item_set_interval();
-}
-function item_set_interval() {
-  for(let f=0; f<8; f++) {
-    let item = items_state[f];
-    clearInterval(item.interval);
-    item.interval = setInterval(() => {
-      if(!item.falling) return;
-      item.pos++;
-      item.el.style.setProperty('--pos', item.pos);
-      if(item.pos == item_max_pos) item_fall_stop(item);
-      else if(item.pos == item_atk_pos && cur_pos == f) ATK_Manager.hit();
-    }, fall_speed);
-  }
-}
-function hit_stop_items() {
-  items_state.forEach(item => {
-    clearTimeout(item.wait);
-    item.falling = false;
-    item.el.style.removeProperty('--fall_speed');
-  });
-}
-function reset_items() {
-  items_state.forEach(item => {
-    item.pos = 0;
-    item.el.style.setProperty('--pos', 0);
-  });
-}
-function item_fall_stop(item) {
-  item.falling = false;
-  item.el.style.removeProperty('--fall_speed');
-  item.pos = 0;
-  item.el.style.setProperty('--pos', 0);
-}
 function item_fall_p(indexs) {
   let check_indexs = [];
   indexs.forEach(index => {
+    if(index < 0 || index > 7) return;
     if(!check_indexs.includes(index)) check_indexs.push(index);
   });
-  check_indexs.forEach(index => item_fall(index));
+  check_indexs.forEach(index => new ItemObj(index));
 }
 function item_fall(index) {
-  let item = items_state[index];
-  item.wait = setTimeout(() => {
-    item_fall_stop(item);
-    item.wait = setTimeout(() => {
+  new ItemObj(index);
+}
+class ItemObj {
+  static fall_speed = 28;
+  static before_wait_time = 300;
+  static set_before_time(target_time) {
+    ItemObj.before_wait_time = target_time;
+    ATK_base.one_atk_time = ItemObj.before_wait_time + ItemObj.fall_speed * ItemObj.max_pos;
+  }
+  static set_fall_speed(target_time) {
+    ItemObj.fall_speed = target_time;
+    ATK_base.one_atk_time = ItemObj.before_wait_time + ItemObj.fall_speed * ItemObj.max_pos;
+  }
+  static max_pos = 23;
+  static atk_pos = 9;
+  static all = [];
+  static skin_class_list = [];
+  static hit_stop_all_item() {
+    ItemObj.all.forEach(item => {
+      item.el.style.setProperty('--fall_speed', "0s");
+      if(Math.abs(ItemObj.atk_pos - item.fall_pos) <= 1) {
+        item.el.style.setProperty('--fall_pos', ItemObj.atk_pos);
+      }
+      clearTimeout(item.before_wait);
+      clearTimeout(item.falling_timeout);
+    });
+  }
+  static remove_all_item() {
+    ItemObj.all.forEach(item => item.el.remove());
+    ItemObj.all = [];
+  }
+  static remove_item(target_item) {
+    let index = ItemObj.all.indexOf(target_item);
+    ItemObj.all.splice(index, 1);
+  }
+  static skin(class_names) {
+    if(!Array.isArray(class_names)) class_names = [class_names];
+    ItemObj.skin_class_list.push(class_names);
+  }
+  constructor(grid_pos) {
+    this.grid_pos = grid_pos;
+    this.el = new_el_to_el('#items', 'div.item');
+    this.el.style.setProperty('--grid_pos', grid_pos);
+    this.el.style.setProperty('--fall_pos', this.fall_pos = 0);
+    this.el.style.setProperty('--fall_speed', (ItemObj.fall_speed / 1000) + "s");
+    this.set_skin();
+    this.before_wait = setTimeout(() => {
       se("fall");
-      item.el.style.setProperty('--fall_speed', (fall_speed / 1000) + "s");
-      item.falling = true;
-    }, 20);
-  }, fall_before_time - 20);
+      this.fall_tick();
+    }, ItemObj.before_wait_time);
+    ItemObj.all.push(this);
+  }
+  set_skin() {
+    let class_names = ItemObj.skin_class_list.shift();
+    if(class_names) class_names.forEach(class_name => this.el.classList.add(class_name));
+  }
+  fall_tick() {
+    this.fall_pos++;
+    this.el.style.setProperty('--fall_pos', this.fall_pos);
+    this.falling_timeout = setTimeout(() => this.fall_check(), ItemObj.fall_speed);
+  }
+  fall_check() {
+    if(this.fall_pos == ItemObj.max_pos) this.fall_end_remove();
+    else if(this.fall_pos == ItemObj.atk_pos && cur_pos == this.grid_pos) ATK_Manager.hit();
+    else this.fall_tick();
+  }
+  fall_end_remove() {
+    clearTimeout(this.falling_timeout);
+    this.el.remove();
+    ItemObj.remove_item(this);
+  }
 }
 
 /* ================================ */
@@ -400,7 +286,7 @@ function item_fall(index) {
 /* ================================ */
 var cur_pos = 4, move_lock = true, moving = false;
 function move(direction) {
-  if(move_lock || moving) return;
+  if(game_state != "run" || move_lock || moving) return;
   find('#character').classList.toggle('r', direction > 0);
   if(cur_pos + direction >= 0 && cur_pos + direction <= 7) {
     cur_pos += direction;
