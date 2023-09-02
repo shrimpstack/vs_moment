@@ -214,6 +214,25 @@ body {
 }
 
 /* ================================ */
+/*   嘉納                           */
+/* ================================ */
+#kanou {
+  position: absolute;
+  top: 128px;
+  left: calc(160px + 32px * var(--pos));
+  background: var(--c_img);
+  width: 96px;
+  height: 160px;
+  transition: left .1s .0s linear, background 0s;
+}
+#kanou.r {
+  transform: scaleX(-1);
+}
+#kanou.move {
+  animation: .28s linear 0s 1 character_move;
+}
+
+/* ================================ */
 /*   掉落攻擊                       */
 /* ================================ */
 #items {
@@ -230,7 +249,7 @@ body {
   position: absolute;
   --grid_pos: -6;
   --fall_pos: 0;
-  transition: top var(--fall_speed) linear;
+  transition: top var(--fall_speed) linear, left var(--fall_speed) linear;
   top: calc(32px * var(--fall_pos));
   left: calc(32px * var(--grid_pos));
 }

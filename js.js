@@ -1,11 +1,23 @@
 window.onload = () => {
   document.addEventListener('keydown', e => {
-    if(e.code == "ArrowLeft" || e.code == "KeyA") { move(-1); select_character(-1); return; }
-    if(e.code == "ArrowRight" || e.code == "KeyD") { move(1); select_character(1); return; }
-    if(e.code == "Space" || e.code == "KeyZ" || e.code == "Enter") {
-      if(view_text_ing) text_hide();
-      else if(in_title) check_select_character();
-      else if(game_end) back_title();
+    KanouUnlock.key_code_enter(e.code);
+    switch(e.code) {
+      case "ArrowLeft": case "KeyA": {
+        if(e.ctrlKey) Kanou.move(-1);
+        else { move(-1); select_character(-1); }
+        break;
+      }
+      case "ArrowRight": case "KeyD": {
+        if(e.ctrlKey) Kanou.move(1);
+        else { move(1); select_character(1); }
+        break;
+      }
+      case "Space": case "KeyZ": case "Enter": {
+        if(view_text_ing) text_hide();
+        else if(in_title) check_select_character();
+        else if(game_end) back_title();
+        break;
+      }
     }
   });
   find('#character').style.setProperty('--pos', cur_pos = 4);
@@ -27,6 +39,7 @@ function start() {
   tip("");
   setTimeout(() => {
     game_state = "run";
+    KanouUnlock.start();
     time_go();
     find('#vs_moment').style.display = "none";
     move_lock = false;
@@ -36,6 +49,7 @@ function start() {
 function clearance_game() {
   clearInterval(main_interval);
   move_lock = true;
+  ItemObj.remove_all_item();
   ATK_Manager.game_stop_atk();
   game_state = "clear";
   setTimeout(() => {
@@ -50,7 +64,9 @@ function clearance_game() {
   setTimeout(bgm_stop, 2400);
   setTimeout(() => {
     let unlock_list = character_list[cur_character_index].unlock;
-    if(unlock_list) unlock_character(unlock_list);
+    unlock_list = KanouUnlock.end(unlock_list || []);
+    unlock_character(unlock_list);
+    Kanou.leave();
     game_state = "clear_ed";
     game_end = true;
   }, 3000);
@@ -62,6 +78,8 @@ function gameover() {
   clearInterval(main_interval);
   move_lock = true;
   ATK_Manager.game_stop_atk();
+  KanouUnlock.end();
+  Kanou.leave();
   game_state = "fail";
   game_end = true;
 }
@@ -74,6 +92,7 @@ function back_title() {
   game_state = "wait";
   game_end = false;
   in_title = true;
+  KanouUnlock.back_title_clear_enter();
   find('#title').removeAttribute('style');
 }
 
@@ -102,15 +121,15 @@ var in_title = true, selecting = false;
 var cur_character_index = 0;
 function unlock_character(target_names) {
   if(!Array.isArray(target_names)) target_names = [target_names];
-  let unlock_count = target_names.map(name => {
+  let unlock_names = target_names.map(name => {
     let character = character_list.find(c => c.name == name);
-    if(!character || !character.lock) return false;
+    if(!character || !character.lock) return null;
     character.lock = false;
-    return true;
-  }).filter(c => c).length;
-  if(unlock_count) {
+    return character.name;
+  }).filter(c => c);
+  if(unlock_names.length) {
     se('get');
-    text_show(target_names.map(n => "已解鎖 " + n).join('\n'));
+    text_show(unlock_names.map(n => "已解鎖 " + n).join('\n'));
   }
 }
 function select_character(direction) {
@@ -138,7 +157,9 @@ function select_character(direction) {
 function view_character() {
   let character = character_list[cur_character_index];
   find('#character_name span').innerText = character.name;
-  find('#character_image').src = `./img/character/${character.title_img || character.skin}.png`;
+  let img = character.title_img || character.skin;
+  if(!character.lock && character.unlock_title_img) img = character.unlock_title_img;
+  find('#character_image').src = `./img/character/${img}.png`;
   find('#character_image').classList.toggle('lock', character.lock);
   find('#character_name').classList.toggle('lock', character.lock);
 }
@@ -163,8 +184,127 @@ function character_data_read(character) {
   ItemObj.set_fall_speed(character.fall_speed);
   find('#se_fall').src = `./audio/${character.se_fall}.mp3`;
   find('#se_move').src = `./audio/${character.se_move}.mp3`;
+  if(character.name == "嘉納扇 (困難版)") Kanou.join();
   ATK_Wait.wait_time = character.wait_time;
   atk_list = character.atk_list;
+}
+
+/* ================================ */
+/*   嘉納                           */
+/* ================================ */
+class KanouUnlock {
+  static lock = true;
+  static cur_enter = "";
+  static prev_direction = null;
+  static start() {
+    KanouUnlock.entering = false;
+    if(!KanouUnlock.lock) return;
+    if(character_list[cur_character_index].name != "阿藤春樹") return;
+    KanouUnlock.entering = true;
+    KanouUnlock.cur_enter = "";
+    KanouUnlock.prev_direction = null;
+  }
+  static next_move(direction) {
+    if(!KanouUnlock.entering) return;
+    if(!KanouUnlock.cur_enter && cur_pos == 1) {
+      KanouUnlock.cur_enter = "2";
+    }
+    else if(KanouUnlock.prev_direction != direction) {
+      KanouUnlock.prev_direction = direction;
+      KanouUnlock.check();
+    }
+  }
+  static check() {
+    if(!KanouUnlock.entering) return;
+    if(KanouUnlock.cur_enter == "21548") return;
+    let target_pos = -1;
+    switch(KanouUnlock.cur_enter) {
+      case    "2": target_pos = 0; break;
+      case   "21": target_pos = 4; break;
+      case  "215": target_pos = 3; break;
+      case "2154": target_pos = 7; break;
+    }
+    if(cur_pos == target_pos) {
+      KanouUnlock.cur_enter += "" + (target_pos + 1);
+      se("kanou_password");
+    }
+    else KanouUnlock.cur_enter = "";
+  }
+  static end(arr = []) {
+    if(!KanouUnlock.entering) return;
+    if(hp == 3 && KanouUnlock.cur_enter == "21548") {
+      character_list.splice(2, 0, ...hidden_character_kanou);
+      arr.push("嘉納扇");
+      KanouUnlock.lock = false;
+    }
+    return arr;
+  }
+  static key_code_cur_enter = "";
+  static back_title_clear_enter() {
+    KanouUnlock.key_code_cur_enter = "";
+  }
+  static key_code_enter(key_code) {
+    if(!KanouUnlock.lock || !in_title) return;
+    if(character_list[cur_character_index].name != "阿藤春樹") return;
+    let target_code = "20150408"[KanouUnlock.key_code_cur_enter.length];
+    let check = false;
+    if(key_code.replace(/^(Numpad|Digit)/, '') == target_code) {
+      KanouUnlock.key_code_cur_enter += target_code;
+    }
+    else {
+      KanouUnlock.key_code_cur_enter = "";
+    }
+    if(KanouUnlock.key_code_cur_enter == "20150408") {
+      character_list.splice(2, 0, ...hidden_character_kanou);
+      unlock_character("嘉納扇");
+      KanouUnlock.lock = false;
+    }
+  }
+}
+class Kanou {
+  static cur_pos = -1;
+  static el = null;
+  static join() {
+    Kanou.el = new_el('div#kanou.r');
+    Kanou.el.style.setProperty('--pos', Kanou.cur_pos = 3);
+    find('#character').before(Kanou.el);
+  }
+  static leave() {
+    if(Kanou.el) Kanou.el.remove();
+    Kanou.el = null;
+    Kanou.cur_pos = -1;
+  }
+  static move(direction) {
+    if(!Kanou.el) return;
+    if(game_state != "run" || Kanou.moving) return;
+    if(Kanou.cur_pos + direction < 0 || Kanou.cur_pos + direction > 7) return;
+    Kanou.el.classList.toggle('r', direction > 0);
+    let stop = Kanou.cur_pos == cur_pos;
+    Kanou.cur_pos += direction;
+    Kanou.moving = true;
+    Kanou.el.classList.add('move');
+    Kanou.el.style.setProperty('--pos', Kanou.cur_pos);
+    se("kanou_move");
+    setTimeout(() => {
+      if(Kanou.el) Kanou.el.classList.remove('move');
+      Kanou.moving = false;
+      Kanou.follow();
+    }, 280);
+    return stop;
+  }
+  static follow() {
+    if(!Kanou.el) return;
+    if(Math.abs(Kanou.cur_pos - cur_pos) > 4) {
+      Kanou.move(Kanou.cur_pos > cur_pos ? -1 : 1);
+    }
+  }
+  static push(direction) {
+    if(!Kanou.el) return;
+    if(cur_pos + direction == Kanou.cur_pos) {
+      Kanou.move(direction);
+      return true;
+    }
+  }
 }
 
 /* ================================ */
@@ -236,7 +376,11 @@ class ItemObj {
     });
   }
   static remove_all_item() {
-    ItemObj.all.forEach(item => item.el.remove());
+    ItemObj.all.forEach(item => {
+      clearTimeout(item.before_wait);
+      clearTimeout(item.falling_timeout);
+      item.el.remove();
+    });
     ItemObj.all = [];
   }
   static remove_item(target_item) {
@@ -287,18 +431,20 @@ class ItemObj {
 var cur_pos = 4, move_lock = true, moving = false;
 function move(direction) {
   if(game_state != "run" || move_lock || moving) return;
+  if(cur_pos + direction < 0 || cur_pos + direction > 7) return;
   find('#character').classList.toggle('r', direction > 0);
-  if(cur_pos + direction >= 0 && cur_pos + direction <= 7) {
-    cur_pos += direction;
-    moving = true;
-    find('#character').classList.add('move');
-    find('#character').style.setProperty('--pos', cur_pos);
-    se("move");
-    setTimeout(() => {
-      find('#character').classList.remove('move');
-      moving = false;
-    }, 300);
-  }
+  if(Kanou.push(direction)) return;
+  KanouUnlock.next_move(direction);
+  cur_pos += direction;
+  Kanou.follow();
+  moving = true;
+  find('#character').classList.add('move');
+  find('#character').style.setProperty('--pos', cur_pos);
+  se("move");
+  setTimeout(() => {
+    find('#character').classList.remove('move');
+    moving = false;
+  }, 280);
 }
 
 /* ================================ */
@@ -314,6 +460,7 @@ function se(se_name) {
   let audio;
   switch(se_name) {
     case "gameover": audio = find("#se_gameover"); break;
+    case "kanou_move": audio = find("#se_kanou_move"); break;
     case "move": audio = find("#se_move"); break;
     case "fall": audio = find("#se_fall"); break;
     case "hit": audio = find("#se_hit"); break;
@@ -322,6 +469,7 @@ function se(se_name) {
     case "key_cancel": audio = find("#se_key_cancel"); break;
     case "get": audio = find("#se_get"); break;
     case "yeah": audio = find("#se_yeah"); break;
+    case "kanou_password": audio = find("#se_p"); audio.volume = 0.4; break;
     default: return;
   }
   audio.pause();

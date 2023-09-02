@@ -21,31 +21,91 @@
 /* ================================ */
 /*   嘉納扇                         */
 /* ================================ */
-#root[name="嘉納扇"] {
-  background-image: url(./img/bg/病房.png);
-  --c_img: url(./img/move/嘉納.gif);
-  --c_img_a: url(./img/move/嘉納a.png);
-  --c_img_b: url(./img/move/嘉納b.png);
+#root[name="嘉納扇"], #root[name="嘉納扇D"] {
+  --c_img: url(./img/move/阿藤.gif);
+  --c_img_a: url(./img/move/阿藤a.png);
+  --c_img_b: url(./img/move/阿藤b.png);
 }
-#root[name="嘉納扇"] #character {
+#root[name="嘉納扇"] #gameover:after,
+#root[name="嘉納扇D"] #gameover:after {
+  content: "ED 01";
+  color: #A00;
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  font-size: 20px;
+  font-family: fantasy;
+  letter-spacing: 3px;
+}
+#root[name="嘉納扇"] #character,
+#root[name="嘉納扇D"] #character {
   filter: sepia(0.2) drop-shadow(1px 1px 1px #0003);
 }
-#root[name="嘉納扇"] #kanou {
-  filter: brightness(1.03) drop-shadow(1px 1px 1px #0003);
-}
-#root[name="嘉納扇"] #items {
+#root[name="嘉納扇"] #items,
+#root[name="嘉納扇D"] #items {
   z-index: 1;
 }
-#root[name="嘉納扇"] .item:after {
+#root[name="嘉納扇"] .item:after,
+#root[name="嘉納扇D"] .item:after {
   bottom: 0px;
   width: 32px;
   height: 32px;
   background: url(./img/item/手術刀.png);
   filter: brightness(1.05) drop-shadow(0 0 1px #fffA);
 }
-#root[name="嘉納扇"]:after {
+#root[name="嘉納扇"]:after,
+#root[name="嘉納扇D"]:after {
   backdrop-filter: brightness(0.9);
   background: #f001;
+}
+/* ================================ */
+/*   嘉納扇 N版特殊                 */
+/* ================================ */
+#root[name="嘉納扇"] {
+  background-image: url(./img/bg/病房A.gif);
+}
+#root[name="嘉納扇"].hit {
+  background-image: url(./img/bg/病房B.gif);
+}
+#root[name="嘉納扇"].kanou_falling {
+  background-image: url(./img/bg/病房.png);
+}
+#root[name="嘉納扇"] .item.kanou:after {
+  bottom: -12px;
+  left: -12px;
+  width: 56px;
+  height: 56px;
+  background: url(./img/item/嘉納.png);
+  filter: none;
+}
+
+/* ================================ */
+/*   嘉納扇 D版特殊                 */
+/* ================================ */
+#root[name="嘉納扇D"] {
+  background-image: url(./img/bg/病房.png);
+}
+#root[name="嘉納扇D"] #vs_moment:before {
+  content: "Ctrl + ← →";
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  color: #fff;
+  font-family: monospace;
+  font-size: 14px;
+}
+#root[name="嘉納扇D"] #kanou {
+  filter: brightness(1.03) drop-shadow(1px 1px 1px #0003);
+  --c_img: url(./img/move/嘉納.gif);
+  --c_img_a: url(./img/move/嘉納a.png);
+  --c_img_b: url(./img/move/嘉納b.png);
+}
+#root[name="嘉納扇D"] #character_load_img {
+  background:
+    var(--c_img), var(--c_img_a), var(--c_img_b),
+    url(./img/move/嘉納.gif),
+    url(./img/move/嘉納a.png),
+    url(./img/move/嘉納b.png);
 }
 
 /* ================================ */
@@ -117,7 +177,4 @@
 }
 #root[name="宇津木德幸"].hit:after {
   background: #F004 !important;
-}
-#character_image[src*="宇津木德幸"]:not(.lock) {
-  content: url(./img/character/宇津木德幸-血.png);
 }

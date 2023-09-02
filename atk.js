@@ -291,23 +291,24 @@ atk_get.ATK_Even_YouPosition = class extends ATK_base {
 
 // 奇偶與右到左
 atk_get.ATK_OddEven_R2L = class extends ATK_base {
-  static atk_count = 13;
+  static atk_count = 9;
   static init() {
     tip("ODD & EVEN & RIGHT => LEFT");
     this.set_time(450);
   }
   static tick(i) {
     switch(i) {
-      case  0: item_fall_p([0, 2, 4, 6, 7]); break;
-      case  1: item_fall_p([1, 3, 5, 7, 6]); break;
-      case  3: item_fall_p([0, 2, 4, 6, 5]); break;
-      case  4: item_fall_p([1, 3, 5, 7, 4]); break;
-      case  6: item_fall_p([0, 2, 4, 6, 3]); break;
-      case  7: item_fall_p([1, 3, 5, 7, 2]); break;
-      case  9: item_fall_p([0, 2, 4, 6, 1]); break;
-      case 10: item_fall_p([1, 3, 5, 7, 0]); break;
+      case 0: item_fall_p([0, 2, 4, 6, 7]); break;
+      case 1: item_fall_p([1, 3, 5, 7, 6]); this.set_time(1500); break;
+      case 2: item_fall_p([0, 2, 4, 6, 5]); this.set_time(450); break;
+      case 3: item_fall_p([1, 3, 5, 7, 4]); this.set_time(1500); break;
+      case 4: item_fall_p([0, 2, 4, 6, 3]); this.set_time(450); break;
+      case 5: item_fall_p([1, 3, 5, 7, 2]); this.set_time(1500); break;
+      case 6: item_fall_p([0, 2, 4, 6, 1]); this.set_time(450); break;
+      case 7: item_fall_p([1, 3, 5, 7, 0]); this.set_time(1500); break;
     }
-    if(i == 12) {
+    if(i == 8) {
+      tip('AMEN');
       ItemObj.skin('amen');
       item_fall(cur_pos);
     }
@@ -519,7 +520,7 @@ atk_get.ATK_4 = class extends ATK_base {
   }
 }
 
-// 跳舞
+// 三和追蹤
 atk_get.ATK_triple_And_YouPosition = class extends ATK_base {
   static atk_count = 8;
   static init() {
@@ -536,6 +537,126 @@ atk_get.ATK_triple_And_YouPosition = class extends ATK_base {
       case 3: item_fall_p([6, 7, 0, cur_pos]); break;
       case 6: item_fall_p([4, 5, 6]); break;
       case 7: item_fall_p([0, 1, 2, cur_pos]); break;
+    }
+  }
+}
+
+// 隨機
+atk_get.ATK_random_base = class extends ATK_base {
+  static atk_count = 24;
+  static item_count = 4;
+  static temp_fall_speed = 28;
+  static empty_pos = 0;
+  static direction = 0;
+  static init() {
+    tip("RANDOM ?");
+    this.set_time(500 / ATK_base.main_speed);
+    this.empty_pos = cur_pos;
+    this.direction = -1;
+    this.temp_fall_speed = ItemObj.fall_speed;
+    ItemObj.set_fall_speed(80);
+  }
+  static tick(i) {
+    let arr = new Array(this.item_count).fill(0).map(v => Math.floor(Math.random() * 8))
+    .filter(v => v != this.empty_pos);
+    item_fall_p(arr);
+    this.empty_pos += this.direction;
+    if(this.empty_pos == -1) {
+      this.empty_pos = 1;
+      this.direction = 1;
+    }
+    else if(this.empty_pos == 8) {
+      this.empty_pos = 6;
+      this.direction = -1;
+    }
+  }
+  static end_init() {
+    ItemObj.set_fall_speed(this.temp_fall_speed);
+  }
+}
+
+// 隨機
+atk_get.ATK_random_1 = class extends atk_get.ATK_random_base {
+  static atk_count = 5;
+  static item_count = 1;
+}
+// 隨機
+atk_get.ATK_random_2 = class extends atk_get.ATK_random_base {
+  static atk_count = 9;
+  static item_count = 2;
+}
+// 隨機
+atk_get.ATK_random_3 = class extends atk_get.ATK_random_base {
+  static atk_count = 15;
+  static item_count = 2;
+}
+// 隨機
+atk_get.ATK_random_4 = class extends atk_get.ATK_random_base {
+  static atk_count = 24;
+  static item_count = 4;
+}
+
+// 不給命
+atk_get.ATK_all_and_kanou = class extends ATK_base {
+  static atk_count = 2;
+  static temp_fall_speed = 28;
+  static init() {
+    tip("♡");
+    move_lock = true;
+    find('#root').classList.add('kanou_falling');
+    this.set_time(300);
+    this.temp_fall_speed = ItemObj.fall_speed;
+    ItemObj.set_fall_speed(42);
+    hp++;
+  }
+  static tick(i) {
+    if(!i) {
+      this.set_time(1200 / ATK_base.main_speed);
+    }
+    else {
+      ItemObj.skin('kanou');
+      item_fall_p([cur_pos, 0, 1, 2, 3, 4, 5, 6, 7]);
+    }
+  }
+  static end_init() {
+    move_lock = false;
+    find('#root').classList.remove('kanou_falling');
+  }
+  static end_init() {
+    ItemObj.set_fall_speed(this.temp_fall_speed);
+  }
+}
+atk_get.ATK_all = class extends ATK_base {
+  static atk_count = 1;
+  static init() {
+    tip("♡");
+    this.set_time(300);
+    hp++;
+  }
+  static tick(i) {
+    item_fall_p([0, 1, 2, 3, 4, 5, 6, 7].filter(v => v != Kanou.cur_pos));
+  }
+}
+
+// 嘉納專屬
+atk_get.ATK_kanou = class extends ATK_base {
+  static atk_count = 10;
+  static init() {
+    tip("☆");
+    this.set_time(450);
+  }
+  static tick(i) {
+    switch(i) {
+      case 0: item_fall_p([0, 1, 2, 3, cur_pos]); break;
+      case 1: item_fall_p([0, 4]); break;
+      case 2: item_fall_p([1, 3]); break;
+      case 3: item_fall_p([2, 4]); break;
+      case 4: item_fall_p([3, cur_pos]); break;
+      case 5: item_fall_p([4, cur_pos]); break;
+      case 6: item_fall_p([3, 5]); break;
+      case 7: item_fall_p([4, 6]); break;
+      case 8: item_fall_p([3, 7]); break;
+      case 9: item_fall_p([4, 5, 6, 7, cur_pos]); break;
     }
   }
 }
