@@ -231,7 +231,8 @@ class KanouUnlock {
     else KanouUnlock.cur_enter = "";
   }
   static end(arr = []) {
-    if(!KanouUnlock.entering) return;
+    if(!KanouUnlock.entering) return arr;
+    KanouUnlock.entering = false;
     if(hp == 3 && KanouUnlock.cur_enter == "21548") {
       character_list.splice(2, 0, ...hidden_character_kanou);
       arr.push("嘉納扇");
