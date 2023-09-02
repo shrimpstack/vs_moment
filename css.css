@@ -199,7 +199,7 @@ body {
   transform: scaleX(-1);
 }
 #character.move {
-  animation: .3s linear 0s 1 character_move;
+  animation: var(--move_speed, 0.3s) linear 0s 1 character_move;
 }
 @keyframes character_move {
   0% { background: var(--c_img_a); }
@@ -231,7 +231,7 @@ body {
   transform: scaleX(-1);
 }
 #kanou.move {
-  animation: .3s linear 0s 1 character_move;
+  animation: var(--move_speed, 0.3s) linear 0s 1 character_move;
 }
 
 /* ================================ */

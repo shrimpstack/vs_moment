@@ -182,6 +182,7 @@ function character_data_read(character) {
   hp = character.hp;
   time = character.time;
   find('#character').style.setProperty('--pos', cur_pos = character.start_pos);
+  set_move_speed(character.move_speed);
   ATK_base.main_speed = character.main_speed;
   ItemObj.set_before_time(character.fall_before_time);
   ItemObj.set_fall_speed(character.fall_speed);
@@ -293,7 +294,7 @@ class Kanou {
       if(Kanou.el) Kanou.el.classList.remove('move');
       Kanou.moving = false;
       Kanou.follow();
-    }, 300);
+    }, move_speed);
     return stop;
   }
   static follow() {
@@ -432,7 +433,7 @@ class ItemObj {
 /* ================================ */
 /*   移動                           */
 /* ================================ */
-var cur_pos = 4, move_lock = true, moving = false;
+var cur_pos = 4, move_lock = true, moving = false, move_speed = 300;
 function move(direction) {
   if(game_state != "run" || move_lock || moving) return;
   if(cur_pos + direction < 0 || cur_pos + direction > 7) return;
@@ -448,7 +449,12 @@ function move(direction) {
   setTimeout(() => {
     find('#character').classList.remove('move');
     moving = false;
-  }, 300);
+  }, move_speed);
+}
+function set_move_speed(target_speed) {
+  move_speed = target_speed || 300;
+  find('#character').style.setProperty('--move_speed', (move_speed / 1000) + "s");
+  if(Kanou.el) Kanou.el.style.setProperty('--move_speed', (move_speed / 1000) + "s");
 }
 
 /* ================================ */
