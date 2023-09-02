@@ -159,6 +159,7 @@ body {
   color: transparent;
   z-index: 1;
   filter: drop-shadow(2px 2px 0 #000);
+  user-select: none;
 }
 
 /* ================================ */
@@ -179,6 +180,7 @@ body {
   filter: drop-shadow(2px 2px 0 #000);
   width: 100%;
   text-align: center;
+  user-select: none;
 }
 
 /* ================================ */
@@ -229,7 +231,7 @@ body {
   transform: scaleX(-1);
 }
 #kanou.move {
-  animation: .28s linear 0s 1 character_move;
+  animation: .3s linear 0s 1 character_move;
 }
 
 /* ================================ */

@@ -3,16 +3,19 @@ window.onload = () => {
     KanouUnlock.key_code_enter(e.code);
     switch(e.code) {
       case "ArrowLeft": case "KeyA": {
+        e.preventDefault();
         if(e.ctrlKey) Kanou.move(-1);
         else { move(-1); select_character(-1); }
         break;
       }
       case "ArrowRight": case "KeyD": {
+        e.preventDefault();
         if(e.ctrlKey) Kanou.move(1);
         else { move(1); select_character(1); }
         break;
       }
       case "Space": case "KeyZ": case "Enter": {
+        e.preventDefault();
         if(view_text_ing) text_hide();
         else if(in_title) check_select_character();
         else if(game_end) back_title();
@@ -290,7 +293,7 @@ class Kanou {
       if(Kanou.el) Kanou.el.classList.remove('move');
       Kanou.moving = false;
       Kanou.follow();
-    }, 280);
+    }, 300);
     return stop;
   }
   static follow() {
@@ -445,7 +448,7 @@ function move(direction) {
   setTimeout(() => {
     find('#character').classList.remove('move');
     moving = false;
-  }, 280);
+  }, 300);
 }
 
 /* ================================ */
