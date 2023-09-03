@@ -78,6 +78,13 @@
   background: url(./img/item/嘉納.png);
   filter: none;
 }
+#root[name="嘉納扇"] #character_load_img {
+  background:
+    var(--c_img), var(--c_img_a), var(--c_img_b),
+    url(./img/move/病房A.gif),
+    url(./img/move/病房B.gif),
+    url(./img/move/病房.png);
+}
 
 /* ================================ */
 /*   嘉納扇 D版特殊                 */

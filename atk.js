@@ -531,10 +531,10 @@ atk_get.ATK_triple_And_YouPosition = class extends ATK_base {
     switch(i) {
       case 0: item_fall_p([1, 2, 3]); break;
       case 1: item_fall_p([5, 6, 7, cur_pos]); break;
-      case 4: item_fall_p([3, 4, 5]); break;
-      case 5: item_fall_p([7, 0, 1, cur_pos]); break;
       case 2: item_fall_p([2, 3, 4]); break;
       case 3: item_fall_p([6, 7, 0, cur_pos]); break;
+      case 4: item_fall_p([3, 4, 5]); break;
+      case 5: item_fall_p([7, 0, 1, cur_pos]); break;
       case 6: item_fall_p([4, 5, 6]); break;
       case 7: item_fall_p([0, 1, 2, cur_pos]); break;
     }
@@ -595,6 +595,10 @@ atk_get.ATK_random_4 = class extends atk_get.ATK_random_base {
   static atk_count = 24;
   static item_count = 4;
 }
+atk_get.ATK_random_5 = class extends atk_get.ATK_random_base {
+  static atk_count = 5;
+  static item_count = 5;
+}
 
 // 不給命
 atk_get.ATK_all_and_kanou = class extends ATK_base {
@@ -621,8 +625,6 @@ atk_get.ATK_all_and_kanou = class extends ATK_base {
   static end_init() {
     move_lock = false;
     find('#root').classList.remove('kanou_falling');
-  }
-  static end_init() {
     ItemObj.set_fall_speed(this.temp_fall_speed);
   }
 }

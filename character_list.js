@@ -183,6 +183,7 @@ const hidden_character_kanou = [
       "ATK_random_2", "ATK_kanou",
       "ATK_random_3", "ATK_R2L",
       "ATK_random_4",  "ATK_all_and_kanou",
+      "ATK_random_5", "ATK_YouPosition",
     ],
   },
   {
@@ -206,6 +207,7 @@ const hidden_character_kanou = [
       "ATK_random_2", "ATK_kanou",
       "ATK_random_3", "ATK_R2L",
       "ATK_random_4",  "ATK_all",
+      "ATK_random_5", "ATK_YouPosition",
     ],
   },
 ];
