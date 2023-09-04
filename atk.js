@@ -215,6 +215,50 @@ atk_get.ATK_L2R_YouPosition = class extends ATK_base {
   }
 }
 
+// 右到左追蹤
+atk_get.ATK_R2L_YouPosition = class extends ATK_base {
+  static atk_count = 10;
+  static init() {
+    tip("RIGHT => LEFT & you position");
+    this.set_time(450);
+  }
+  static tick(i) {
+    let target = [[7, 6], [5], [4, 3], [2], [1, 0]][i % 5];
+    if(i % 2) target.push(cur_pos);
+    item_fall_p(target);
+  }
+}
+
+// 左右左右
+atk_get.ATK_LRLR = class extends ATK_base {
+  static atk_count = 13;
+  static init() {
+    tip("L => R => L => R");
+    this.set_time(450);
+  }
+  static tick(i) {
+    i %= 8;
+    if(i > 4) i = 8 - i;
+    let target = [[0, 1], 2, [3, 4], 5, [6, 7]][i];
+    if(typeof target == "number") item_fall(target);
+    else item_fall_p(target);
+  }
+}
+atk_get.ATK_RLRL = class extends ATK_base {
+  static atk_count = 13;
+  static init() {
+    tip("R => L => R => L");
+    this.set_time(450);
+  }
+  static tick(i) {
+    i %= 8;
+    if(i > 4) i = 8 - i;
+    let target = [[7, 6], 5, [4, 3], 2, [1, 0]][i];
+    if(typeof target == "number") item_fall(target);
+    else item_fall_p(target);
+  }
+}
+
 /* ================================ */
 /*   奇偶系列                       */
 /* ================================ */
@@ -504,6 +548,34 @@ atk_get.ATK_I2O2I = class extends ATK_base {
 /* ================================ */
 /*   無系列                         */
 /* ================================ */
+
+// 閃電
+atk_get.ATK_Thunder_L2R = class extends ATK_base {
+  static atk_count = 14;
+  static init() {
+    tip("THUNDER LEFT => RIGHT");
+    this.set_time(100);
+  }
+  static tick(i) {
+    let fall_pos = Math.floor(i / 5) * 3 + (i % 5 % 2) + (i % 5 == 4) * 2;
+    item_fall(fall_pos);
+    if(i % 5 == 3) this.set_time(450);
+    if(i % 5 == 0) this.set_time(100);
+  }
+}
+atk_get.ATK_Thunder_R2L = class extends ATK_base {
+  static atk_count = 14;
+  static init() {
+    tip("THUNDER RIGHT => LEFT");
+    this.set_time(100);
+  }
+  static tick(i) {
+    let fall_pos = 7 - Math.floor(i / 5) * 3 - (i % 5 % 2) - (i % 5 == 4) * 2;
+    item_fall(fall_pos);
+    if(i % 5 == 3) this.set_time(450);
+    if(i % 5 == 0) this.set_time(100);
+  }
+}
 
 // 4個並排
 atk_get.ATK_4 = class extends ATK_base {

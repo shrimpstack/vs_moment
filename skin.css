@@ -135,6 +135,26 @@
 }
 
 /* ================================ */
+/*   信濃榮治                       */
+/* ================================ */
+#root[name="信濃榮治"] {
+  background-image: url(./img/bg/收容室.png);
+  --c_img: url(./img/move/信濃.gif);
+  --c_img_a: url(./img/move/信濃a.png);
+  --c_img_b: url(./img/move/信濃b.png);
+}
+#root[name="信濃榮治"] .item:after {
+  bottom: -32px;
+  width: 32px;
+  height: 64px;
+  background: url(./img/item/針.gif);
+}
+#root[name="信濃榮治"]:after {
+  backdrop-filter: brightness(1.15);
+  background: #0000ff18;
+}
+
+/* ================================ */
 /*   磯井實光                       */
 /* ================================ */
 #root[name="磯井實光"] {
