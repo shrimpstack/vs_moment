@@ -110,9 +110,9 @@
 #root[name="嘉納扇D"] #character_load_img {
   background:
     var(--c_img), var(--c_img_a), var(--c_img_b),
-    url(./img/move/嘉納.gif),
-    url(./img/move/嘉納a.png),
-    url(./img/move/嘉納b.png);
+    url(./img/bg/嘉納.gif),
+    url(./img/bg/嘉納a.png),
+    url(./img/bg/嘉納b.png);
 }
 
 /* ================================ */
