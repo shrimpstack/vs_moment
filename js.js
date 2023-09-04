@@ -1,4 +1,6 @@
 window.onload = () => {
+  find_all('script').forEach(el => el.src += "?" + Math.random());
+  find_all('[rel="stylesheet"]').forEach(el => el.href += "?" + Math.random());
   document.addEventListener('keydown', e => {
     KanouUnlock.key_code_enter(e.code);
     switch(e.code) {
