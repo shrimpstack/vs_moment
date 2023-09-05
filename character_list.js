@@ -102,7 +102,7 @@ const character_list = [
   {
     name: "信濃榮治 (困難版)",
     skin: "信濃榮治",
-    lock: false,
+    lock: true,
     unlock: ["磯井實光", "磯井實光 (困難版)"],
     tip: true,
     hp: 3,
