@@ -16,6 +16,11 @@ window.onload = () => {
         else { move(1); select_character(1); }
         break;
       }
+      case "KeyX": {
+        e.preventDefault();
+        clear_page_toggle();
+        break;
+      }
       case "Space": case "KeyZ": case "Enter": {
         e.preventDefault();
         if(view_text_ing) text_hide();
@@ -53,7 +58,6 @@ function load_game_progress() {
   });
 }
 function save_game_progress() {
-  console.log(character_list[0].clear)
   let unlock_list_val = character_list.filter(character => !character.lock)
   .map(character => character.name).join("、");
   Cookie.set("unlock_list", unlock_list_val);
@@ -176,7 +180,7 @@ function unlock_character(target_names) {
   }
 }
 function select_character(direction) {
-  if(!in_title || selecting) return;
+  if(!in_title || selecting || in_clear_page || clear_page_toggling) return;
   selecting = true;
   se("key_move");
   find_all('.move_ani').forEach(el => el.classList.add(direction == 1 ? 'left_hide' : 'right_hide'));
@@ -208,7 +212,7 @@ function view_character() {
   find('#character_name').classList.toggle('clear', !!character.clear);
 }
 function check_select_character() {
-  if(!in_title || selecting) return;
+  if(!in_title || selecting || in_clear_page || clear_page_toggling) return;
   let character = character_list[cur_character_index];
   if(character.lock) return se("key_cancel");
   se("key_check");
@@ -232,6 +236,40 @@ function character_data_read(character) {
   if(character.name == "嘉納扇 (困難版)") Kanou.join();
   ATK_Wait.wait_time = character.wait_time;
   atk_list = character.atk_list;
+}
+
+/* ================================ */
+/*   通關頁                         */
+/* ================================ */
+var in_clear_page = false, clear_page_toggling = false;
+function clear_page_toggle() {
+  if(!in_title || selecting || clear_page_toggling) return;
+  clear_page_toggling = true;
+  in_clear_page = !in_clear_page;
+  se("key_move");
+  if(in_clear_page) view_clear_page();
+  find("#clear_page").classList.toggle('hidden', !in_clear_page);
+  setTimeout(() => {
+    clear_page_toggling = false;
+  }, 400);
+}
+function view_clear_page() {
+  let div_arr = find_all("#clear_page div");
+  ["阿藤春樹", "嘉納扇", "磯井麗慈", "信濃榮治", "磯井實光", "宇津木德幸"].forEach((name, index) => {
+    let check_clear_result = check_clear([name, name + " (困難版)"]);
+    let check_unlock_result = check_unlock([name, name + " (困難版)"]);
+    div_arr[index].classList.toggle('clear', check_clear_result);
+    div_arr[index].classList.toggle('unlock', check_unlock_result);
+    if(check_unlock_result && index == 1) div_arr[index].setAttribute('name', '嘉納扇');
+  });
+}
+function check_unlock(name_arr) {
+  if(!Array.isArray(name_arr)) name_arr = [name_arr];
+  return character_list.filter(c => name_arr.includes(c.name) && !c.lock).length == name_arr.length;
+}
+function check_clear(name_arr) {
+  if(!Array.isArray(name_arr)) name_arr = [name_arr];
+  return character_list.filter(c => name_arr.includes(c.name) && c.clear).length == name_arr.length;
 }
 
 /* ================================ */
