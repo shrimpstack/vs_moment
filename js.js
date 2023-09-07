@@ -26,8 +26,42 @@ window.onload = () => {
     }
   });
   find('#character').style.setProperty('--pos', cur_pos = 4);
+  load_game_progress();
   view_character(cur_character_index = 0);
 };
+
+/* ================================ */
+/*   流程                           */
+/* ================================ */
+function load_game_progress() {
+  let kanou_unlocked = false;
+  let unlock_list_val = Cookie.get("unlock_list");
+  if(unlock_list_val) {
+    unlock_list_val.split("、").forEach(name => {
+      let character = character_list.find(c => c.name == name);
+      if(character) character.lock = false;
+    });
+    if(/嘉納扇/.test(unlock_list_val)) {
+      character_list.splice(2, 0, ...hidden_character_kanou);
+      hidden_character_kanou.forEach(character => character.lock = false);
+      KanouUnlock.lock = false;
+    }
+  }
+  (Cookie.get("clear_list") || "").split("、").forEach(name => {
+    let character = character_list.find(c => c.name == name);
+    if(character) character.clear = true;
+  });
+}
+function save_game_progress() {
+  console.log(character_list[0].clear)
+  let unlock_list_val = character_list.filter(character => !character.lock)
+  .map(character => character.name).join("、");
+  Cookie.set("unlock_list", unlock_list_val);
+
+  let clear_list_val = character_list.filter(character => character.clear)
+  .map(character => character.name).join("、");
+  Cookie.set("clear_list", clear_list_val);
+}
 
 /* ================================ */
 /*   流程                           */
@@ -57,6 +91,8 @@ function clearance_game() {
   ItemObj.remove_all_item();
   ATK_Manager.game_stop_atk();
   game_state = "clear";
+  character_list[cur_character_index].clear = true;
+  save_game_progress();
   setTimeout(() => {
     bgm.volume = 0.3;
     find('#gameclear').classList.add('go');
@@ -99,6 +135,7 @@ function back_title() {
   in_title = true;
   KanouUnlock.back_title_clear_enter();
   find('#title').removeAttribute('style');
+  view_character();
 }
 
 /* ================================ */
@@ -135,6 +172,7 @@ function unlock_character(target_names) {
   if(unlock_names.length) {
     se('get');
     text_show(unlock_names.map(n => "已解鎖 " + n).join('\n'));
+    save_game_progress();
   }
 }
 function select_character(direction) {
@@ -165,8 +203,9 @@ function view_character() {
   let img = character.title_img || character.skin;
   if(!character.lock && character.unlock_title_img) img = character.unlock_title_img;
   find('#character_image').src = `./img/character/${img}.png`;
-  find('#character_image').classList.toggle('lock', character.lock);
-  find('#character_name').classList.toggle('lock', character.lock);
+  find('#character_image').classList.toggle('lock', !!character.lock);
+  find('#character_name').classList.toggle('lock', !!character.lock);
+  find('#character_name').classList.toggle('clear', !!character.clear);
 }
 function check_select_character() {
   if(!in_title || selecting) return;
