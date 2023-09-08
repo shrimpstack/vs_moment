@@ -244,6 +244,25 @@ body {
 }
 
 /* ================================ */
+/*   實光                           */
+/* ================================ */
+#snmt {
+  position: absolute;
+  top: 224px;
+  left: calc(160px + 32px * var(--pos));
+  background: var(--c_img);
+  width: 96px;
+  height: 160px;
+  transition: left .1s .0s linear, background 0s;
+}
+#snmt.r {
+  transform: scaleX(-1);
+}
+#snmt.move {
+  animation: var(--move_speed, 0.3s) linear 0s 1 character_move;
+}
+
+/* ================================ */
 /*   掉落攻擊                       */
 /* ================================ */
 #items {

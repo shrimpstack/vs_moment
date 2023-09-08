@@ -55,7 +55,7 @@
   left: 48px;
   bottom: 48px;
   padding: 2px 8px;
-  width: 240px;
+  width: 220px;
   border: #555 solid;
   border-width: 2px 6px;
   --len: 10px;
@@ -179,12 +179,14 @@
   top: 0;
   z-index: 2000;
   background: #000;
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-content: center;
   gap: 8px;
-  grid-template-columns: repeat(3, auto);
   transition: top .3s, opacity .3s;
+  box-sizing: border-box;
+  padding: 0 80px;
 }
 #clear_page.hidden {
   top: 20px;
@@ -263,4 +265,9 @@
   left: -128px;
   top: -30px;
   transform: scaleX(-1);
+}
+#clear_page div[name="磯井父子"].unlock {
+  background-image: url(./img/bg/鱷魚河邊.png);
+  --move_img: url(./img/move/小麗慈.gif);
+  background-position: -400px -278px;
 }

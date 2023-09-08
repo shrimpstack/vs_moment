@@ -16,6 +16,16 @@ window.onload = () => {
         else { move(1); select_character(1); }
         break;
       }
+      case "KeyJ": {
+        e.preventDefault();
+        Snmt.move(-1);
+        break;
+      }
+      case "KeyL": {
+        e.preventDefault();
+        Snmt.move(1);
+        break;
+      }
       case "KeyX": {
         e.preventDefault();
         clear_page_toggle();
@@ -86,6 +96,7 @@ function start() {
     time_go();
     find('#vs_moment').style.display = "none";
     move_lock = false;
+    ATK_Manager.init();
     game_run();
   }, 8000);
 }
@@ -111,6 +122,7 @@ function clearance_game() {
     let unlock_list = character_list[cur_character_index].unlock;
     unlock_list = KanouUnlock.end(unlock_list || []);
     unlock_character(unlock_list);
+    Snmt.leave();
     Kanou.leave();
     game_state = "clear_ed";
     game_end = true;
@@ -124,6 +136,7 @@ function gameover() {
   move_lock = true;
   ATK_Manager.game_stop_atk();
   KanouUnlock.end();
+  Snmt.leave();
   Kanou.leave();
   game_state = "fail";
   game_end = true;
@@ -225,6 +238,7 @@ function character_data_read(character) {
   find('#root').setAttribute('name', character.skin);
   has_tip = character.tip;
   hp = character.hp;
+  Snmt.start_hp = character.snmt_hp;
   time = character.time;
   find('#character').style.setProperty('--pos', cur_pos = character.start_pos);
   set_move_speed(character.move_speed);
@@ -232,8 +246,10 @@ function character_data_read(character) {
   ItemObj.set_before_time(character.fall_before_time);
   ItemObj.set_fall_speed(character.fall_speed);
   find('#se_fall').src = `./audio/${character.se_fall}.mp3`;
+  find('#se_fall_2').src = `./audio/${character.se_fall_2 || character.se_fall}.mp3`;
   find('#se_move').src = `./audio/${character.se_move}.mp3`;
-  if(character.name == "嘉納扇 (困難版)") Kanou.join();
+  if(character.name == "嘉納扇 (困難版)") Kanou.join_the_game();
+  if(/磯井父子/.test(character.name)) Snmt.join_the_game();
   ATK_Wait.wait_time = character.wait_time;
   atk_list = character.atk_list;
 }
@@ -255,7 +271,8 @@ function clear_page_toggle() {
 }
 function view_clear_page() {
   let div_arr = find_all("#clear_page div");
-  ["阿藤春樹", "嘉納扇", "磯井麗慈", "信濃榮治", "磯井實光", "宇津木德幸"].forEach((name, index) => {
+  ["阿藤春樹", "嘉納扇", "磯井麗慈", "信濃榮治", "磯井實光", "宇津木德幸", "磯井父子"]
+  .forEach((name, index) => {
     let check_clear_result = check_clear([name, name + " (困難版)"]);
     let check_unlock_result = check_unlock([name, name + " (困難版)"]);
     div_arr[index].classList.toggle('clear', check_clear_result);
@@ -348,10 +365,11 @@ class KanouUnlock {
 class Kanou {
   static cur_pos = -1;
   static el = null;
-  static join() {
+  static join_the_game() {
     Kanou.el = new_el('div#kanou.r');
     Kanou.el.style.setProperty('--pos', Kanou.cur_pos = 3);
     find('#character').before(Kanou.el);
+    find('#se_move_2').src = `./audio/咻.mp3`;
   }
   static leave() {
     if(Kanou.el) Kanou.el.remove();
@@ -368,7 +386,7 @@ class Kanou {
     Kanou.moving = true;
     Kanou.el.classList.add('move');
     Kanou.el.style.setProperty('--pos', Kanou.cur_pos);
-    se("kanou_move");
+    se("move_2");
     setTimeout(() => {
       if(Kanou.el) Kanou.el.classList.remove('move');
       Kanou.moving = false;
@@ -389,6 +407,43 @@ class Kanou {
       return true;
     }
   }
+}
+
+/* ================================ */
+/*   實光                           */
+/* ================================ */
+class Snmt {
+  static cur_pos = -1;
+  static el = null;
+  static start_hp = 5;
+  static join_the_game() {
+    Snmt.el = new_el('div#snmt.r');
+    Snmt.el.style.setProperty('--pos', Snmt.cur_pos = 3);
+    find('#character').before(Snmt.el);
+    find('#se_move_2').src = `./audio/咻.mp3`;
+    Snmt.hp = Snmt.start_hp;
+  }
+  static leave() {
+    if(Snmt.el) Snmt.el.remove();
+    Snmt.el = null;
+    Snmt.cur_pos = -1;
+  }
+  static move(direction) {
+    if(!Snmt.el) return;
+    if(game_state != "run" || Snmt.moving || move_lock) return;
+    if(Snmt.cur_pos + direction < 0 || Snmt.cur_pos + direction > 7) return;
+    Snmt.el.classList.toggle('r', direction > 0);
+    Snmt.cur_pos += direction;
+    Snmt.moving = true;
+    Snmt.el.classList.add('move');
+    Snmt.el.style.setProperty('--pos', Snmt.cur_pos);
+    se("move_2");
+    setTimeout(() => {
+      if(Snmt.el) Snmt.el.classList.remove('move');
+      Snmt.moving = false;
+    }, move_speed);
+  }
+  
 }
 
 /* ================================ */
@@ -435,77 +490,142 @@ function item_fall(index) {
   new ItemObj(index);
 }
 class ItemObj {
+  static se_target = "fall";
   static fall_speed = 28;
   static before_wait_time = 300;
   static set_before_time(target_time) {
-    ItemObj.before_wait_time = target_time;
-    ATK_base.one_atk_time = ItemObj.before_wait_time + ItemObj.fall_speed * ItemObj.max_pos;
+    this.before_wait_time = target_time;
+    ATK_base.one_atk_time = this.before_wait_time + this.fall_speed * this.max_pos;
   }
   static set_fall_speed(target_time) {
-    ItemObj.fall_speed = target_time;
-    ATK_base.one_atk_time = ItemObj.before_wait_time + ItemObj.fall_speed * ItemObj.max_pos;
+    this.fall_speed = target_time;
+    ATK_base.one_atk_time = this.before_wait_time + this.fall_speed * this.max_pos;
   }
   static max_pos = 23;
   static atk_pos = 9;
   static all = [];
   static skin_class_list = [];
   static hit_stop_all_item() {
-    ItemObj.all.forEach(item => {
+    this.all.forEach(item => {
       item.el.style.setProperty('--fall_speed', "0s");
-      if(Math.abs(ItemObj.atk_pos - item.fall_pos) <= 1) {
-        item.el.style.setProperty('--fall_pos', ItemObj.atk_pos);
+      if(Math.abs(this.atk_pos - item.fall_pos) <= 1) {
+        item.el.style.setProperty('--fall_pos', this.atk_pos);
       }
       clearTimeout(item.before_wait);
       clearTimeout(item.falling_timeout);
     });
   }
   static remove_all_item() {
-    ItemObj.all.forEach(item => {
+    this.all.forEach(item => {
       clearTimeout(item.before_wait);
       clearTimeout(item.falling_timeout);
       item.el.remove();
     });
-    ItemObj.all = [];
+    this.all = [];
   }
   static remove_item(target_item) {
-    let index = ItemObj.all.indexOf(target_item);
-    ItemObj.all.splice(index, 1);
+    let index = this.all.indexOf(target_item);
+    this.all.splice(index, 1);
   }
   static skin(class_names) {
     if(!Array.isArray(class_names)) class_names = [class_names];
-    ItemObj.skin_class_list.push(class_names);
+    this.skin_class_list.push(class_names);
   }
   constructor(grid_pos) {
     this.grid_pos = grid_pos;
     this.el = new_el_to_el('#items', 'div.item');
     this.el.style.setProperty('--grid_pos', grid_pos);
     this.el.style.setProperty('--fall_pos', this.fall_pos = 0);
-    this.el.style.setProperty('--fall_speed', (ItemObj.fall_speed / 1000) + "s");
+    this.el.style.setProperty('--fall_speed', (this.constructor.fall_speed / 1000) + "s");
     this.set_skin();
     this.before_wait = setTimeout(() => {
-      se("fall");
+      se(this.constructor.se_target);
       this.fall_tick();
-    }, ItemObj.before_wait_time);
-    ItemObj.all.push(this);
+    }, this.constructor.before_wait_time);
+    this.constructor.all.push(this);
   }
   set_skin() {
-    let class_names = ItemObj.skin_class_list.shift();
+    let class_names = this.constructor.skin_class_list.shift();
     if(class_names) class_names.forEach(class_name => this.el.classList.add(class_name));
   }
   fall_tick() {
     this.fall_pos++;
     this.el.style.setProperty('--fall_pos', this.fall_pos);
-    this.falling_timeout = setTimeout(() => this.fall_check(), ItemObj.fall_speed);
+    this.falling_timeout = setTimeout(() => this.fall_check(), this.constructor.fall_speed);
   }
   fall_check() {
-    if(this.fall_pos == ItemObj.max_pos) this.fall_end_remove();
-    else if(this.fall_pos == ItemObj.atk_pos && cur_pos == this.grid_pos) ATK_Manager.hit();
+    if(this.fall_pos == this.constructor.max_pos) this.fall_end_remove();
+    else if(this.fall_pos == this.constructor.atk_pos && cur_pos == this.grid_pos) ATK_Manager.hit();
     else this.fall_tick();
   }
   fall_end_remove() {
     clearTimeout(this.falling_timeout);
     this.el.remove();
-    ItemObj.remove_item(this);
+    this.constructor.remove_item(this);
+  }
+}
+
+/* ================================ */
+/*   特殊攻擊物件                   */
+/* ================================ */
+function item_s_fall_p(type, indexs) {
+  let check_indexs = [];
+  indexs.forEach(index => {
+    if(index < 0 || index > 7) return;
+    if(!check_indexs.includes(index)) check_indexs.push(index);
+  });
+  switch(type) {
+    case "c": check_indexs.forEach(index => new ItemObjCrocodile(index)); break;
+    case "e": check_indexs.forEach(index => new ItemObjEagle(index)); break;
+  }
+}
+function item_s_fall(type, index) {
+  switch(type) {
+    case "c": new ItemObjCrocodile(index); break;
+    case "e": new ItemObjEagle(index); break;
+  }
+}
+class ItemObjCrocodile extends ItemObj {
+  static all = [];
+  static clear_pos = 8;
+  static atk_pos = 12;
+  constructor(grid_pos) {
+    super(grid_pos);
+  }
+  fall_check() {
+    if(this.fall_pos == this.constructor.max_pos) this.fall_end_remove();
+    else if(this.fall_pos == this.constructor.clear_pos && cur_pos == this.grid_pos) ATK_Manager.clear_item(this);
+    else if(this.fall_pos == this.constructor.atk_pos && Snmt.cur_pos == this.grid_pos) ATK_Manager.hit("snmt");
+    else this.fall_tick();
+  }
+}
+class ItemObjEagle extends ItemObj {
+  static se_target = "fall_2";
+  static all = [];
+  static hit_stop_all_item() {
+    this.all.forEach(item => {
+      item.el.style.setProperty('--fall_speed', "0s");
+      if(Math.abs(this.atk_pos_1 - item.fall_pos) <= 1) {
+        item.el.style.setProperty('--fall_pos', this.atk_pos_1);
+      }
+      if(Math.abs(this.atk_pos_2 - item.fall_pos) <= 1) {
+        item.el.style.setProperty('--fall_pos', this.atk_pos_2);
+      }
+      clearTimeout(item.before_wait);
+      clearTimeout(item.falling_timeout);
+    });
+  }
+  static atk_pos_1 = 8;
+  static atk_pos_2 = 12;
+  constructor(grid_pos) {
+    super(grid_pos);
+    this.el.classList.add('eagle');
+  }
+  fall_check() {
+    if(this.fall_pos == this.constructor.max_pos) this.fall_end_remove();
+    else if(this.fall_pos == this.constructor.atk_pos_1 && cur_pos == this.grid_pos) ATK_Manager.hit();
+    else if(this.fall_pos == this.constructor.atk_pos_2 && Snmt.cur_pos == this.grid_pos) ATK_Manager.hit("snmt");
+    else this.fall_tick();
   }
 }
 
@@ -514,7 +634,7 @@ class ItemObj {
 /* ================================ */
 var cur_pos = 4, move_lock = true, moving = false, move_speed = 300;
 function move(direction) {
-  if(game_state != "run" || move_lock || moving) return;
+  if(game_state != "run" || move_lock || moving || ATK_Manager.clear_move_lock) return;
   if(cur_pos + direction < 0 || cur_pos + direction > 7) return;
   find('#character').classList.toggle('r', direction > 0);
   if(Kanou.push(direction)) return;
@@ -539,18 +659,25 @@ function set_move_speed(target_speed) {
 /* ================================ */
 /*   音效                           */
 /* ================================ */
-var fall_se_space = false;
+var fall_se_space = false, fall_2_se_space = false;
 function se(se_name) {
   if(se_name == "fall") {
     if(fall_se_space) return;
     fall_se_space = true;
     setTimeout(() => fall_se_space = false, 100);
   }
+  if(se_name == "fall_2") {
+    if(fall_2_se_space) return;
+    fall_2_se_space = true;
+    setTimeout(() => fall_2_se_space = false, 100);
+  }
   let audio;
   switch(se_name) {
     case "gameover": audio = find("#se_gameover"); break;
-    case "kanou_move": audio = find("#se_kanou_move"); break;
+    case "move_2": audio = find("#se_move_2"); break;
+    case "clear_item": audio = find("#se_clear_item"); break;
     case "move": audio = find("#se_move"); break;
+    case "fall_2": audio = find("#se_fall_2"); break;
     case "fall": audio = find("#se_fall"); break;
     case "hit": audio = find("#se_hit"); break;
     case "key_move": audio = find("#se_key_move"); break;

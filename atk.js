@@ -3,6 +3,12 @@
 /* ================================ */
 class ATK_Manager {
   static cur_atk = null;
+  static clear_move_lock = false;
+  static init() {
+    ATK_Manager.cur_atk = null;
+    ATK_Manager.hitting = false;
+    ATK_Manager.clear_move_lock = false;
+  }
   static async start_atk(target_class) {
     if(game_state != "run") return;
     ATK_Manager.cur_atk = target_class;
@@ -17,26 +23,51 @@ class ATK_Manager {
     if(ATK_Manager.cur_atk && ATK_Manager.cur_atk.hit_end) {
       ATK_Manager.cur_atk.hit_end();
     }
+    ATK_Manager.hitting = false;
   }
   static game_stop_atk() {
     if(ATK_Manager.cur_atk && ATK_Manager.cur_atk.game_stop) {
       ATK_Manager.cur_atk.game_stop();
     }
   }
-  static hit() {
+  static hitting = false;
+  static hit(target) {
+    if(ATK_Manager.hitting) return;
+    if(target == "snmt") Snmt.hp--;
+    else hp--;
+    ATK_Manager.hitting = true;
     move_lock = true;
-    hp--;
-    ItemObj.hit_stop_all_item();
+    ATK_Manager.hit_stop_all_item();
     ATK_Manager.hit_stop_atk();
     find('#root').classList.add('hit');
     se("hit");
     setTimeout(() => {
       find('#root').classList.remove('hit');
-      ItemObj.remove_all_item();
+      ATK_Manager.remove_all_item();
       move_lock = false;
-      if(hp == 0) gameover();
+      if(hp == 0 || Snmt.hp == 0) gameover();
       else setTimeout(ATK_Manager.hit_end_atk, 600);
     }, 600);
+  }
+  static hit_stop_all_item() {
+    ItemObj.hit_stop_all_item();
+    ItemObjCrocodile.hit_stop_all_item();
+    ItemObjEagle.hit_stop_all_item();
+  }
+  static remove_all_item() {
+    ItemObj.remove_all_item();
+    ItemObjCrocodile.remove_all_item();
+    ItemObjEagle.remove_all_item();
+  }
+  static clear_item(target_item) {
+    ATK_Manager.clear_move_lock = true;
+    se("clear_item");
+    find('#character').classList.add('move');
+    setTimeout(() => {
+      find('#character').classList.remove('move');
+      target_item.fall_end_remove();
+      ATK_Manager.clear_move_lock = false;
+    }, move_speed);
   }
 }
 
@@ -732,5 +763,83 @@ atk_get.ATK_kanou = class extends ATK_base {
       case 8: item_fall_p([3, 7]); break;
       case 9: item_fall_p([4, 5, 6, 7, cur_pos]); break;
     }
+  }
+}
+
+/* ================================ */
+/*   小麗慈專屬                     */
+/* ================================ */
+
+// 奇數偶數特別版
+atk_get.ATK_OddEven_s = class extends ATK_base {
+  static atk_count = 12;
+  static init() {
+    tip("ODD & EVEN");
+    this.set_time(450);
+  }
+  static tick(i) {
+    let target_pos = i % 2 ? [0, 2, 4, 6] : [1, 3, 5, 7];
+    if((i % 3 + 1) % 2) item_s_fall_p("c", target_pos);
+    else item_s_fall_p("e", target_pos);
+  }
+}
+
+// 三個一個
+atk_get.ATK_triple_one = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
+    tip("triple & one");
+    this.set_time(450);
+  }
+  static tick(i) {
+    switch(i) {
+      case 0: item_s_fall_p("c", [1, 2, 3]); item_s_fall_p("e", [6, 7]); break;
+      case 1: item_s_fall_p("c", [4, 5, 6]); item_s_fall_p("e", [0, 1]); break;
+      case 2: item_s_fall_p("c", [0, 1, 2]); item_s_fall_p("e", [4, 5]); break;
+      case 3: item_s_fall_p("c", [5, 6, 7]); item_s_fall_p("e", [2, 3]); break;
+      case 4: item_s_fall_p("c", [1, 2, 3]); item_s_fall_p("e", [4, 6]); break;
+      case 5: item_s_fall_p("c", [4, 5, 6]); item_s_fall_p("e", [1, 3]); break;
+      case 6: item_s_fall_p("c", [0, 1, 2]); item_s_fall_p("e", [5, 7]); break;
+      case 7: item_s_fall_p("c", [5, 6, 7]); item_s_fall_p("e", [0, 2]); break;
+    }
+  }
+}
+
+// 左到右追蹤實光
+atk_get.ATK_L2R_SnmtPosition = class extends ATK_base {
+  static atk_count = 16;
+  static init() {
+    tip("LEFT => RIGHT & dad's position");
+    this.set_time(300);
+  }
+  static tick(i) {
+    if(i % 2) item_s_fall("c", Snmt.cur_pos);
+    else item_s_fall("e", i / 2);
+  }
+}
+
+// 右到左追蹤實光
+atk_get.ATK_R2L_SnmtPosition = class extends ATK_base {
+  static atk_count = 8;
+  static init() {
+    tip("RIGHT => LEFT & dad's position");
+    this.set_time(450);
+  }
+  static tick(i) {
+    item_s_fall("c", Snmt.cur_pos);
+    item_s_fall("e", 7 - i);
+  }
+}
+
+// 同時追蹤
+atk_get.ATK_YouPosition_SnmtPosition = class extends ATK_base {
+  static atk_count = 10;
+  static init() {
+    tip("your position & dad's position");
+    this.set_time(220 / ATK_base.main_speed);
+  }
+  static tick(i) {
+    if(i % 2) item_s_fall("c", Snmt.cur_pos);
+    else item_s_fall("e", cur_pos);
   }
 }

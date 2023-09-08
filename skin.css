@@ -205,3 +205,51 @@
 #root[name="宇津木德幸"].hit:after {
   background: #F004 !important;
 }
+
+/* ================================ */
+/*   磯井父子                       */
+/* ================================ */
+#root[name="磯井父子"] {
+  background-image: url(./img/bg/鱷魚河邊.png);
+  --c_img: url(./img/move/小麗慈.gif);
+  --c_img_a: url(./img/move/小麗慈a.png);
+  --c_img_b: url(./img/move/小麗慈b.png);
+}
+#root[name="磯井父子"] #vs_moment:before {
+  content: "J / L";
+  position: absolute;
+  left: 8px;
+  bottom: 2px;
+  color: #fff;
+  font-family: monospace;
+  font-size: 14px;
+}
+#root[name="磯井父子"] #character {
+  top: 96px;
+}
+#root[name="磯井父子"] .item:after {
+  bottom: -32px;
+  left: -16px;
+  width: 64px;
+  height: 160px;
+  background: url(./img/item/鱷魚.png);
+}
+#root[name="磯井父子"] .item.eagle:after {
+  bottom: -16px;
+  left: -16px;
+  width: 64px;
+  height: 64px;
+  background: url(./img/item/老鷹.png);
+}
+#root[name="磯井父子"] #snmt {
+  --c_img: url(./img/move/實光2.gif);
+  --c_img_a: url(./img/move/實光2a.png);
+  --c_img_b: url(./img/move/實光2b.png);
+}
+#root[name="磯井父子"] #character_load_img {
+  background:
+    var(--c_img), var(--c_img_a), var(--c_img_b),
+    url(./img/move/實光2.gif),
+    url(./img/move/實光2a.png),
+    url(./img/move/實光2b.png);
+}
